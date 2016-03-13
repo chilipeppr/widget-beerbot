@@ -93,6 +93,26 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
         }
     );
     
+    // Inject new div to contain widget or use an existing div with an ID
+    $("body").append('<' + 'div id="myDivWidgetRecvtext" style="position:absolute;left:20px;width:300px;height:400px;"><' + '/div>');
+    
+    chilipeppr.load(
+      "#myDivWidgetRecvtext",
+      "http://raw.githubusercontent.com/chilipeppr/widget-recvtext/master/auto-generated-widget.html",
+      function() {
+        // Callback after widget loaded into #myDivWidgetRecvtext
+        // Now use require.js to get reference to instantiated widget
+        cprequire(
+          ["inline:com-chilipeppr-widget-recvtext"], // the id you gave your widget
+          function(myObjWidgetRecvtext) {
+            // Callback that is passed reference to the newly loaded widget
+            console.log("Widget / Zipwhip Receive Text just got loaded.", myObjWidgetRecvtext);
+            myObjWidgetRecvtext.init();
+          }
+        );
+      }
+    );
+    
     $('#' + myWidget.id).css('margin', '20px');
     $('title').html(myWidget.name);
 
@@ -171,11 +191,27 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 this.init3d();
             }
 
+            this.setupTextListener();
+
             this.setupUiFromLocalStorage();
             this.btnSetup();
             this.forkSetup();
 
             console.log("I am done being initted.");
+        },
+        /**
+         * Listen for incoming texts so we can trigger the Texterator as well
+         * as send responses back, keep stats, etc.
+         */
+        setupTextListener: function() {
+            chilipeppr.subscribe("/com-chilipeppr-widget-recvtext/recv", this, this.onIncomingText);
+        },
+        /**
+         * This method is called when an incoming text comes in via pubsub from the
+         * Zipwhip Receive Text widget. So make sure that widget is loaded.
+         */
+        onIncomingText: function(msg) {
+            console.log("texterator. got onIncomingText. msg:", msg);
         },
         /**
          * Try to get a reference to the 3D viewer.
