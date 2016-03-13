@@ -113,7 +113,8 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
             
             // only init eagle widget once 3d is loaded
             // init my widget
-            myWidget.init();
+            // myWidget.init();
+            myWidget.init({silent:true});
         });
     });
 
@@ -195,11 +196,20 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
          * All widgets should have an init method. It should be run by the
          * instantiating code like a workspace or a different widget.
          */
-        init: function() {
+        init: function(opts) {
             console.log("I am being initted. Thanks.");
 
-            this.init3d();
-            
+            // see if they passed in options
+            if (opts && 'silent' in opts && opts.silent) {
+                console.log("user wants silent mode");
+                this.isSilent = true;
+                // this.init3d(function() {
+                //     console.log("initted 3d viewer in silent mode");
+                // });
+            } else {
+                this.init3d();
+            }
+
             this.setupUiFromLocalStorage();
             this.btnSetup();
             this.forkSetup();
