@@ -12,6 +12,10 @@
     padding-top:10px;
 }
 
+#com-zipwhip-widget-texterator .table-condensed {
+    font-size:11px;
+}
+
 .btn-laserit {
     border-top-left-radius:0;
     border-bottom-left-radius:0;

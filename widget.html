@@ -33,6 +33,7 @@
 
 <body>
     <div id="com-zipwhip-widget-texterator" class="panel panel-default">
+        
         <div class="panel-heading ">
 
             <div class="btn-toolbar pull-right" role="toolbar">
@@ -57,17 +58,45 @@
         <div class="panel-body">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li class="active"><a href="#com-zipwhip-widget-texterator-tab1" role="tab" data-toggle="tab">Lazy Susan</a>
-                </li>
+                <li class="active"><a href="#com-zipwhip-widget-texterator-tab-queue" role="tab" data-toggle="tab">Queue</a></li>
+                <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab0" role="tab" data-toggle="tab">Users</a></li>
+                <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab1" role="tab" data-toggle="tab">Lazy Susan</a></li>
                 <li><a href="#com-zipwhip-widget-texterator-tab2" role="tab" data-toggle="tab">Tap</a></li>
                 <li><a href="#com-zipwhip-widget-texterator-tab3" role="tab" data-toggle="tab">Dispenser</a></li>
                 <li><a href="#com-zipwhip-widget-texterator-tab4" role="tab" data-toggle="tab">Laser</a></li>
             </ul>
             <!-- Tab panes -->
 
-            <!-- Tab 1 -->
             <div class="tab-content">
-                <div class="tab-pane active" id="com-zipwhip-widget-texterator-tab1">
+
+                <!-- Tab Queue -->
+                <div class="tab-pane active" id="com-zipwhip-widget-texterator-tab-queue">
+                    <table class="table table-condensed table-queue">
+                        <tr><th>Phone</th><th>Beers</th><th>Slot</th><th>Status</th></tr>
+                        <tr><td>734-576-3936</td><td>0</td><td>-</td><td>Waiting...</td></tr>
+                        <tr><td>313-414-7502</td><td>0</td><td>-</td><td>Waiting...</td></tr>
+                        <tr><td>206-555-1234</td><td>1</td><td>7</td><td>Beer pouring...</td></tr>
+                        <tr><td>425-323-5542</td><td>3</td><td>6</td><td>Lasering...</td></tr>
+                        <tr><td>425-934-0909</td><td>2</td><td>5</td><td>Cup pickup...</td></tr>
+                        <tr><td>206-221-8845</td><td>1</td><td>4</td><td>Cup pickup...</td></tr>
+                        <tr><td>206-900-3244</td><td>2</td><td>3</td><td>Cup gone</td></tr>
+                        <tr><td>206-878-8880</td><td>1</td><td>2</td><td>Cup gone</td></tr>
+                        <tr><td>206-747-7700</td><td>1</td><td>1</td><td>Cup gone</td></tr>
+                        <tr><td>206-434-5684</td><td>1</td><td>0</td><td>Cup gone</td></tr>
+                        <tr><td>206-344-1011</td><td>1</td><td>7</td><td>Cup gone</td></tr>
+                    </table>
+                </div>
+
+                <!-- Tab 0 -->
+                <div class="tab-pane xactive" id="com-zipwhip-widget-texterator-tab0">
+                    <table class="table table-condensed table-users">
+                        <tr><th>Phone</th><th>Beers</th><th>Last Beer</th></tr>
+                        <tr><td>313-414-7502x</td><td>1</td><td>3/13/16 11:07AM</td></tr>
+                    </table>
+                </div>
+
+                <!-- Tab 1 -->
+                <div class="tab-pane xactive" id="com-zipwhip-widget-texterator-tab1">
                     <!--<p>This is the content of tab 1.</p>-->
                     <div class="">
                         <button type="button" class="btn xbtn-xs btn-default btn-helloworld2"><span class="glyphicon glyphicon-arrow-left"></span></button>
@@ -114,7 +143,13 @@
             </div>
 
         </div>
+        
+        
     </div>
+    <div class="givemeacup well hidden" style="position:absolute;top:0px;xwidth:100%;margin:20px;font-size:40px;background-color:red;">
+        Please place a cup in slot 0! Somebody wants a beer.
+    </div>
+
 </body>
 
 </html>
