@@ -678,7 +678,6 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 // the trigger we need to fire the laser at the correct time
                 this.tryToStartBeerVendForQueueItem(this.qWaiting[this.qWaiting.length-1]);
             }
-            else if (this.qBee)
             else if (this.qWaiting.length > 0) {
                 // stuff is waiting
                 // trigger attempt for the oldest waiting item, i.e. the one with lowest index, which would be the one at the top
