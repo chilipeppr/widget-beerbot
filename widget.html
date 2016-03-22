@@ -58,11 +58,11 @@
         <div class="panel-body">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li class="active"><a href="#com-zipwhip-widget-texterator-tab-queue" role="tab" data-toggle="tab">Queue</a></li>
+                <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab-queue" role="tab" data-toggle="tab">Queue</a></li>
                 <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab0" role="tab" data-toggle="tab">Users</a></li>
                 <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab1" role="tab" data-toggle="tab">Lazy Susan</a></li>
                 <li><a href="#com-zipwhip-widget-texterator-tab2" role="tab" data-toggle="tab">Tap</a></li>
-                <li><a href="#com-zipwhip-widget-texterator-tab3" role="tab" data-toggle="tab">Dispenser</a></li>
+                <li class="active"><a href="#com-zipwhip-widget-texterator-tab3" role="tab" data-toggle="tab">Cam</a></li>
                 <li><a href="#com-zipwhip-widget-texterator-tab4" role="tab" data-toggle="tab">Laser</a></li>
             </ul>
             <!-- Tab panes -->
@@ -70,7 +70,7 @@
             <div class="tab-content">
 
                 <!-- Tab Queue -->
-                <div class="tab-pane active" id="com-zipwhip-widget-texterator-tab-queue">
+                <div class="tab-pane xactive" id="com-zipwhip-widget-texterator-tab-queue">
                     <table class="table table-condensed table-queue">
                         <tr><th>Phone</th><th>Beers</th><th>Slot</th><th>Status</th></tr>
                         <tr><td>734-576-3936</td><td>0</td><td>-</td><td>Waiting...</td></tr>
@@ -85,6 +85,8 @@
                         <tr><td>206-434-5684</td><td>1</td><td>0</td><td>Cup gone</td></tr>
                         <tr><td>206-344-1011</td><td>1</td><td>7</td><td>Cup gone</td></tr>
                     </table>
+                    <button type="button" class="btn xbtn-xs btn-default btn-wipe">Wipe Queue</button>
+                        
                 </div>
 
                 <!-- Tab 0 -->
@@ -114,20 +116,22 @@
                     </div>                    
                 </div>
 
-                <!-- Tab 3 -->
-                <div class="tab-pane" id="com-zipwhip-widget-texterator-tab3">
-                    <!--<p>This is the content of tab 3.</p>-->
-                    <button type="button" class="btn xbtn-xs btn-default btn-helloworld2">Dispense Cup</button>
+                <!-- Tab 3. Cam -->
+                <div class="active tab-pane" id="com-zipwhip-widget-texterator-tab3">
+                    
+                    <div class="uservideo" style="height:240px;"></div>
+                    
+                    <!--<button type="button" class="btn xbtn-xs btn-default btn-helloworld2">Dispense Cup</button>-->
 
                 </div>
 
-                <!-- Tab 4 -->
+                <!-- Tab 4. Laser -->
                 <div class="tab-pane" id="com-zipwhip-widget-texterator-tab4">
                     <!--<p>This is the content of tab 3.</p>-->
                     <form class="form-inline">
                         <div class="form-group">
                             <div class="input-group">
-                                <input type="text" class="form-control" xstyle="margin-bottom:5px;" placeholder="Enter text to laser" />
+                                <input type="text" class="form-control lasertxt" xstyle="margin-bottom:5px;" placeholder="Enter text to laser" />
                                 <div class="input-group-addon" style="padding:0;">
                                     <button type="button" xstyle="border-radius:0; border:0;" class="btn btn-default btn-laserit">Laser It</button>
                                 </div>
@@ -135,8 +139,9 @@
                         </div>
                     </form>
                     <div class="btn-group" role="group" aria-label="">
-                        <button type="button" class="btn xbtn-xs btn-default btn-helloworld2"><span class="glyphicon glyphicon-arrow-left"></span> <span style="font-size:11px;">Rotate Cup Left</span></button>
-                        <button type="button" class="btn xbtn-xs btn-default btn-helloworld2"><span class="glyphicon glyphicon-arrow-right"></span> <span style="font-size:11px;">Rotate Cup Right</span></button>
+                        <button type="button" class="btn xbtn-xs btn-default btn-laserleft"><span class="glyphicon glyphicon-arrow-left"></span> <span style="font-size:11px;">Rotate Left 10mm</span></button>
+                        <button type="button" class="btn xbtn-xs btn-default btn-laserright"><span class="glyphicon glyphicon-arrow-right"></span> <span style="font-size:11px;">Rotate Right 10mm</span></button>
+                        <button type="button" class="btn xbtn-xs btn-default btn-laserhome"><span class="glyphicon glyphicon-home"></span></button>
                     </div>
                 </div>
 

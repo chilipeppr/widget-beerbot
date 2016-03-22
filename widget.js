@@ -66,7 +66,7 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
       function() {
         cprequire(['inline:com-chilipeppr-widget-3dviewer'], function (threed) {
             threed.init({
-                doMyOwnDragDrop: false
+                doMyOwnDragDrop: true
             });
             
             // hide toolbar for room
@@ -129,7 +129,48 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
           function(myObjWidgetSerialport) {
             // Callback that is passed reference to the newly loaded widget
             console.log("Widget / Serial Port JSON Server just got loaded.", myObjWidgetSerialport);
-            myObjWidgetSerialport.init();
+            myObjWidgetSerialport.init({isSingleSelectMode: true});
+          }
+        );
+      }
+    );
+    
+    // Inject Font2Gcode
+    // Inject new div to contain widget or use an existing div with an ID
+    $("#addonWidgets").append('<' + 'div id="myDivComZipwhipWidgetFont2gcode"><' + '/div>');
+    
+    chilipeppr.load(
+      "#myDivComZipwhipWidgetFont2gcode",
+      "http://raw.githubusercontent.com/chilipeppr/widget-font2gcode/master/auto-generated-widget.html",
+      function() {
+        // Callback after widget loaded into #myDivComZipwhipWidgetFont2gcode
+        // Now use require.js to get reference to instantiated widget
+        cprequire(
+          ["inline:com-zipwhip-widget-font2gcode"], // the id you gave your widget
+          function(myObjComZipwhipWidgetFont2gcode) {
+            // Callback that is passed reference to the newly loaded widget
+            console.log("Widget / Font2Gcode just got loaded.", myObjComZipwhipWidgetFont2gcode);
+            myObjComZipwhipWidgetFont2gcode.init({silent:true});
+          }
+        );
+      }
+    );
+    
+    // Inject Gcode widget so we can play gcode
+    $("#addonWidgets").append('<' + 'div id="myDivWidgetGcode"><' + '/div>');
+    
+    chilipeppr.load(
+      "#myDivWidgetGcode",
+      "http://raw.githubusercontent.com/chilipeppr/widget-gcodelist/master/auto-generated-widget.html",
+      function() {
+        // Callback after widget loaded into #myDivWidgetGcode
+        // Now use require.js to get reference to instantiated widget
+        cprequire(
+          ["inline:com-chilipeppr-widget-gcode"], // the id you gave your widget
+          function(myObjWidgetGcode) {
+            // Callback that is passed reference to the newly loaded widget
+            console.log("Widget / Gcode v3 just got loaded.", myObjWidgetGcode);
+            myObjWidgetGcode.init();
           }
         );
       }
@@ -215,6 +256,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             });
             
             this.setupSerialPubSub();
+            this.setupWatchGcodeDonePubSub();
+            this.setupLaserBtns();
+            this.setupQueueButtons();
             
             // see if they passed in options
             if (opts && 'silent' in opts && opts.silent) {
@@ -228,13 +272,178 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             }
 
             this.setupTextListener();
-
+            this.setupCam();
+            
             this.setupUiFromLocalStorage();
             this.btnSetup();
             this.forkSetup();
 
             console.log("I am done being initted.");
         },
+        
+        /**
+         * Webcam snapshot methods
+         */
+        setupCam: function() {
+            
+            // Compatibility shim
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            
+            navigator.getUserMedia({video: true, audio: true}, 
+                function(localMediaStream) {
+                    var videoEl = document.querySelector('#' + this.id + ' .uservideo');
+                    videoEl.src = window.URL.createObjectURL(localMediaStream);
+
+                    // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+                    // See crbug.com/110938.
+                    videoEl.onloadedmetadata = function(e) {
+                      // Ready to go. Do some stuff.
+                      console.log("got onloadedmetadata. e:", e);
+                    };
+                }, this.camError);
+        },
+        camError: function(err) {
+            console.error("Got err on initting cam. err:", err);
+        },
+        
+        /**
+         * Laser Methods
+         */
+         
+        /**
+         * Setup butons related to laser control.
+         */
+        setupLaserBtns: function() {
+            $('#' + this.id + " .btn-laserhome").click(this.laserHome.bind(this));
+            var that = this;
+            $('#' + this.id + " .btn-laserleft").click(function(evt) {
+                that.sendGcode("G91 G0 X-10\nG90\n");
+            });
+            $('#' + this.id + " .btn-laserright").click(function(evt) {
+                that.sendGcode("G91 G0 X10\nG90\n");
+            });
+            $('#' + this.id + " .btn-laserit").click(this.laserIt.bind(this));
+            $('#' + this.id + " .lasertxt").keypress(function(evt) {
+                console.log("laserit keypress. evt:", evt);
+                if (evt.keyCode == 13) {
+                    // enter key hit
+                    that.laserIt();
+                    return false;
+                }
+            });
+            
+            // watch incoming lines
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvline", this, this.watchIncomingLinesFromTinyG);
+            
+        },
+        laserIt: function() {
+            var that = this;
+            var txt = $('#' + that.id + " .lasertxt").val();
+            that.generateGcode(txt, function(gcode) {
+                that.sendGcodeToWorkspace(gcode);
+            });
+        },
+        sendGcodeToWorkspace: function(gcodetxt) {
+            var info = {
+            	name: "Autogen Gcode for Texterator", 
+            	lastModified: new Date()
+            };
+            // send event off as if the file was drag/dropped
+            ///com-chilipeppr-elem-dragdrop/loadGcodeDoNotCreateRecentFileEntry
+            chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", gcodetxt, info);    
+        },
+        laserHome: function() {
+            // We need to first see if the xmin switch is on. we can send
+            // {"in1":n} 
+            // then we'll get an incoming line like
+            // {"r":{"in1":1},"f":[1,0,11,5000]}
+            // if the switch is off we can home. if it's on then we're homed
+            
+            // we need to analyze this response in watchIncomingLinesFromTinyG
+            this.sendGcode('{"in1":n}\n');
+                
+        },
+        watchIncomingLinesFromTinyG: function(data) {
+            // console.log("watchIncomingLinesFromTinyG. data:", data);
+            // we will recv a line
+            if ('dataline' in data) {
+                var line =  data.dataline;
+                if (line.match(/{"r":{"in1"/)) {
+                    console.log("got sr for xmin switch. line:", line);
+                    var json = JSON.parse(line);
+                    if ('r' in json && 'in1' in json.r) {
+                        if (json.r.in1 == 1) {
+                            console.log("we are already at home position");
+                            // Show a flash msg
+                            chilipeppr.publish(
+                                "/com-chilipeppr-elem-flashmsg/flashmsg",
+                                "Already Homed",
+                                "We appear to already be homed",
+                                1000
+                            );
+                        } else {
+                            // we need to home
+                            this.sendGcode("G28.2 X0\n");
+                        }
+                    }
+                }
+            }
+        },
+        /**
+         * This method sends Gcode to the TinyG. This is not to be confused with sendSerial which
+         * sends to the alternate serial device like the Arduino controlling the Texterator.
+         */
+        sendGcode: function(gcode) {
+            chilipeppr.publish("/com-chilipeppr-widget-serialport/send", gcode);    
+        },
+        generateGcodeCallback: null, // stores the callback the user wants when generating
+        generateGcode: function(txt, callback) {
+            this.generateGcodeCallback = callback;
+            // This method will generate the gcode we will laser. It starts with a Z
+            // logo on the left side and then to the right is the text whether it be
+            // a number or a name
+            var opts = {
+                callback: this.getFontGcodeCallback.bind(this), // the method we will callback with gcode string.
+                text: txt, // the text you want rendered
+                size: 23, // float. height in mm. defaults to 10.
+                fontName: "helvetiker", // helvetiker, optimer, gentilis, droid/droid_sans, droid/droid_serif. defaults to helvetiker.
+                fontWeight: "regular", // regular, bold. defaults to regular.
+                align: "left", // left, center, right. defaults to left.
+                holes: true, // boolean. defaults to true.
+                cut: "solid", // solid, dashed. default to solid.
+                // dashPercent: 20, // integer from 0 to 100. defaults to 20
+                mode: "laser", // laser, mill. defaults to laser.
+                laseron: "m3", // m3, m7. defaults to m3.
+                feedrate: 2000, // integer. defaults to 200
+            };
+            chilipeppr.publish("/com-zipwhip-widget-font2gcode/getGcode", opts);
+        },
+        gcodePreamble: `
+(Auto generated)
+G28.3 X0 Y45 Z0
+G1 F2000 Y30
+`,
+        // gcodeZipwhipLogo: "", // at end of this file so don't have to scroll over it
+        gcodePostamble: `
+(Go to home)
+G0 X0
+G1 Y45
+`,
+        getFontGcodeCallback: function(payload) {
+            console.log("got callback for font2gcode. payload:", payload);
+            
+            // we get here when font2gcode gives us our stuff
+            var gcode = this.gcodePreamble;
+            gcode += this.gcodeZipwhipLogo;
+            gcode += payload.gcode;
+            gcode += this.gcodePostamble;
+            this.generateGcodeCallback(gcode);
+        },
+        
+        /**
+         * This section for Text Messages
+         */
+         
         /**
          * Listen for incoming texts so we can trigger the Texterator as well
          * as send responses back, keep stats, etc.
@@ -313,6 +522,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     // send back response text
                     that.sendText(msg.srcAddr, txt);
                 })
+            } else if (msg.body.match(/^home/i)) {
+                // user wants us to home the machine. this is likely an admin who knows this command
+                this.laserHome();
             } else {
                 
                 // see if they've ever texted in before
@@ -334,39 +546,14 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         },
         
         /**
-         * Serial commands
+         * Serial commands for Arduino controlling Texterator
          */
          
         /**
          * Make sure to update the serial port that the arduino/nodemcu device is on that takes commands.
          */
-        comPort: "com14",
+        comPort: "com44",
         
-        /**
-         * Advances lazy susan once and vends beer
-         */
-        moveFwdSlotAndVendBeer: function() {
-            this.sendSerial("moveFwdSlotAndVendBeer()\n");
-        },
-        /**
-         * Called when we see the done cmd come back in over serial.
-         */
-        onDoneMoveFwdSlotAndVendBeer: function() {
-            // we need to update the queue record for the queueId that just got completed
-            console.log("got done for beer vend. activeQueueIdVendingBeer:", this.activeQueueIdVendingBeer);
-            var that = this;
-            this.getQueue(this.activeQueueIdVendingBeer, function(qrec) {
-                qrec.status = "Beer done. Waiting laser...";
-                qrec.endTime = new Date();
-                that.updateQueue(qrec, function() {
-                    console.log("just updated qrec after beer done");
-                    that.refreshQueueView();
-                    // now that this is done, we need to just re-check the queue and go vend again
-                    that.triggerQueue();
-                });
-            });
-            
-        },
         sendSerial: function(cmd) {
             if (!cmd.match(/\n$/)) cmd += "\n";
             chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", "send " + this.comPort + " " + cmd);    
@@ -395,13 +582,15 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
          * then split on newline to generate individual lines for easy processing.
          */
         processSerialDataRaw: function() {
+            
             // we have a string that has a bunch of newlines, but that string
             // keeps getting appended to as serial data comes in. so we will process each line
             // up to a newline and as we process each line we'll remove it from the string
             var lines = this.lastSerialData.split(/\n/);
-            for (var i in lines) {
+            for (var i = 0; i < lines.length; i++) {
                 if (i == lines.length - 1) break; // don't process last index
                 var line = lines[i];
+                console.log("processSerialDataRaw. line:", line);
                 // remove this line from the lastSerialData
                 this.lastSerialData = this.lastSerialData.substring(line.length + 1);
                 // now process this line. get rid of \r if they exist.
@@ -417,6 +606,15 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         onSerialIncomingLine: function(line) {
             
             console.log("onSerialIncomingLine. line:", line);
+            
+            // COMMANDS we will see from Arduino
+            // waitingforlaser
+            if (line.match(/waitingforlaser/)) {
+                // cool, the beerpour is done
+                this.onDoneVendBeer();
+            }
+            
+            /*
             // when we see certain commands come in, we know stuff is done
             // we should only get json in
             if (line.match(/^{/)) {
@@ -440,6 +638,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     }
                 }
             }
+            */
         },
         /**
          * This method is called if the status is updated from incoming serial data so that we
@@ -462,6 +661,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
          */
         laserSr: {stat: 1},
 
+        isQueueTriggering: false,
         /**
          * In this method we look at the queue and see if there is something to do like send a
          * serial command to start the beer vending process.
@@ -469,6 +669,13 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         triggerQueue: function() {
             
             console.log("triggerQueue");
+            
+            if (this.isQueueTriggering) {
+                console.error("triggerQueue called again while in the middle of triggering");
+                return;
+            }
+            
+            this.isQueueTriggering = true;
             
             // the order of the queue is:
             // ['Waiting...','Beer pouring...', 'Lasering...', 'Cup pickup...', 'Cup gone']
@@ -501,7 +708,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                         qWaiting.push(cursor.key);
                         console.log("qWaiting:", qWaiting);
                     }
-                    else if (cursor.value.status.match(/^Beer pouring/)) {
+                    else if (cursor.value.status.match(/^Beer pour/)) {
                         console.log("user has beer pouring. id:", cursor.key);
                         qBeerPouring.push(cursor.key);
                         console.log("qBeerPouring:", qBeerPouring);
@@ -668,24 +875,139 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             //      moveFwdSlotAndVendBeer()
             // if 
             
-            if (this.qBeerDone.length > 0 && this.qWaiting.length > 0 && this.sr.slots[0] == 1) {
-                console.log("we have a qBeerDone and qWaiting and a cup in slot 0 so we can moveFwdSlot, do beer vend and laser at same time");
-                // moveFwdSlotAndVendBeer() and trigger lasering when moveFwd() done
-                this.laserNeedsTriggeredWhenMoveFwdDone = true;
-                this.laserQueueId = this.qBeerDone[this.qBeerDone.length-1];
-                // by starting the beer vend, we will get a moveFwdSlot which helps the laser
-                // the incoming serial data will say {"done":"moveFwdSlot()"} which will give us
-                // the trigger we need to fire the laser at the correct time
-                this.tryToStartBeerVendForQueueItem(this.qWaiting[this.qWaiting.length-1]);
+            // && this.qWaiting.length > 0 && this.sr.slots[0] == 1) {
+                
+            
+            // if we have beers waitingforlaser
+            if (this.qBeerDone.length > 0) { 
+                console.log("we have a qBeerDone so laser it");
+                
+                // double check that we have no more than one item in this queue
+                // if we do show error/warning
+                if (this.qBeerDone.length > 1) {
+                    console.error("we have more than one item in the qBeerDone which should be impossible!");
+                }
+                
+                // trigger lasering
+                this.triggerLasering(this.qBeerDone[0]);
             }
-            else if (this.qWaiting.length > 0) {
+            
+            // if anything waiting in queue then go ahead and start it
+            //    but ONLY if there's no beers pouring
+            if (this.qWaiting.length > 0 && this.qBeerPouring.length == 0) {
                 // stuff is waiting
                 // trigger attempt for the oldest waiting item, i.e. the one with lowest index, which would be the one at the top
                 console.log("qWaiting:", this.qWaiting);
                 this.tryToStartBeerVendForQueueItem(this.qWaiting[this.qWaiting.length-1]);
             }
+            
+            // mark that we are done processing the queue
+            this.isQueueTriggering = false;
+            
         },
         activeQueueIdVendingBeer: null,
+        /**
+         * Advances lazy susan once and vends beer
+         */
+        vendBeer: function(queueId) {
+            
+            var that = this;
+
+            // record which id the beer vending is for so when
+            // we see a done on the vendBeer we know who it was for
+            // we could have the arduino/nodemcu tell us this id, but that seems like
+            // more work than necessary for an embedded device.
+            this.activeQueueIdVendingBeer = queueId;
+            
+            // get the queue record
+            this.getQueue(queueId, function(qrecord) {
+                console.log("have queue record so now can update, refresh q, and send serial");
+                qrecord.status = "Beer pour";
+                qrecord.slot = 1; // since we're moving to this slot, indicate we'll be there
+                that.updateQueue(qrecord, function() {
+                    console.log("updateQueue finished. can now refresh view.")
+                    that.refreshQueueView();
+                });
+                
+                // this.sendSerial("vendBeer()\n");
+                that.sendSerial("pourbeer()\n");
+                
+            });
+        },
+        /**
+         * Called when we see the done beerpour (waitingforlaser) cmd come back in over serial.
+         */
+        onDoneVendBeer: function() {
+            // we need to update the queue record for the queueId that just got completed
+            console.log("got done for beer vend. activeQueueIdVendingBeer:", this.activeQueueIdVendingBeer);
+            var that = this;
+            var queueId = this.activeQueueIdVendingBeer;
+            this.activeQueueIdVendingBeer = null;
+            this.getQueue(queueId, function(qrec) {
+                qrec.status = "Beer done. Waiting for laser...";
+                qrec.endTime = new Date();
+                that.updateQueue(qrec, function() {
+                    console.log("just updated qrec after beer done");
+                    that.refreshQueueView();
+                    // now that this is done, we need to just re-check the queue and go vend again
+                    that.triggerQueue();
+                });
+            });
+            
+        },
+
+        activeQueueIdLasering: null,
+        triggerLasering: function(queueId) {
+            console.log("triggerLasering. queueId:", queueId);
+            
+            // get the queue record
+            var that = this;
+
+            // record which id the lasering is for so when
+            // we see a done we know who it was for
+            this.activeQueueIdLasering = queueId;
+
+            this.getQueue(queueId, function(qrecord) {
+                // console.log("have queue record so now can update, refresh q, and send serial");
+                qrecord.status = "Lasering...";
+                qrecord.slot = 2; // since we're at this slot, indicate we're there
+                that.updateQueue(qrecord, function() {
+                    // console.log("updateQueue finished. can now refresh view.")
+                    that.refreshQueueView();
+                });
+                
+                // load the gcode
+                // generate gcode for this user for lasering to see it in 3d display
+                // and in gcode widget
+                that.genGcodeForUserAndLoadIntoChiliPeppr(qrecord);
+            });
+        },
+        /**
+         * We get this callback when the lasering Gcode is done running on the TinyG
+         */
+        onLaseringDone: function() {
+            // get the queue record
+            var that = this;
+            var queueId = this.activeQueueIdLasering;
+            this.activeQueueIdLasering = null;
+            this.getQueue(queueId, function(qrecord) {
+                // console.log("have queue record so now can update, refresh q, and send serial");
+                qrecord.status = "Cup pickup.";
+                qrecord.endTime = new Date();
+                // qrecord.slot = 2; // since we're at this slot, indicate we're there
+                that.updateQueue(qrecord, function() {
+                    // console.log("updateQueue finished. can now refresh view.")
+                    that.refreshQueueView();
+                    
+                    that.triggerQueue();
+                });
+                
+                // send laserdone to Arduino
+                that.sendSerial("laserdone()");
+                
+            });
+        },
+        
         /**
          * You can send us a queue ID that you'd like to have us attempt to start a beer vend for.
          * What we look for is whether slot 0 has a cup in it, which would mean sr.slots[0] = 1.
@@ -705,26 +1027,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                         console.log("there is a cup in slot 0. so can proceed");
                          $("#" + this.id + " .givemeacup").addClass("hidden");
                          
-                         // get the queue record
-                        var that = this;
-                        this.getQueue(queueId, function(qrecord) {
-                            console.log("have queue record so now can update, refresh q, and send serial");
-                            qrecord.status = "Beer pouring...";
-                            qrecord.slot = 1; // since we're moving to this slot, indicate we'll be there
-                            that.updateQueue(qrecord, function() {
-                                console.log("updateQueue finished. can now refresh view.")
-                                that.refreshQueueView();
-                            });
-                            
-                            // record which id the beer vending is for so when
-                            // we see a done on the moveFwdSlotAndVendBeer we know who it was for
-                            // we could have the arduino/nodemcu tell us this id, but that seems like
-                            // more work than necessary for an embedded device.
-                            that.activeQueueIdVendingBeer = queueId;
-                            
-                            // send serial port command
-                            that.moveFwdSlotAndVendBeer();
-                        });
+                        this.vendBeer(queueId);
                         
                     } else {
                         // show the "Please give me a cup dialog box"
@@ -740,6 +1043,34 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
             
         },
+        genGcodeForUserAndLoadIntoChiliPeppr: function(qrecord) {
+            // we are passed in a qrecord which contains all db fields for queue
+            var txt = qrecord.phone;
+            // get last 4 digits of phone number
+            txt = txt.substring(txt.length-4);
+            var that = this;
+            $('#' + that.id + " .lasertxt").val(txt);
+            that.generateGcode(txt, function(gcode) {
+                that.sendGcodeToWorkspace(gcode);
+                // now play the gcode file. doing a setTimeout to ensure everythign has 
+                // settled down with other widgets even though i could probably just
+                // trigger immediately.
+                setTimeout(function() {
+                    chilipeppr.publish("/com-chilipeppr-widget-gcode/play");
+                }, 2500);
+            });
+        },
+        setupWatchGcodeDonePubSub: function() {
+            chilipeppr.subscribe("/com-chilipeppr-widget-gcode/done", this, this.onGcodeDonePlaying);    
+        },
+        onGcodeDonePlaying: function(payload) {
+            console.log("got gcode done. payload:", payload);
+            this.onLaseringDone();
+        },
+        /**
+         * We add the user to the beer queue, but that does nothing more than write to the db. It is
+         * up to the independent queue consumption trigerring to pull the queue and see what to do next.
+         */
         injectUserIntoBeerQueue: function(phone) {
             // we need to add this user to the queue
             console.log("injectUserIntoBeerQueue. phone:", phone);
@@ -795,8 +1126,26 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 }
             });
         },
+        setupQueueButtons: function() {
+            $('#' + this.id + " .btn-wipe").click(this.onWipeQueue.bind(this));    
+        },
+        onWipeQueue: function() {
+            var that = this;
+            this.wipeQueue(function(res) {
+                that.refreshQueueView();
+            });
+        },
+        isQueueRefreshing: false,
         refreshQueueView: function() {
 
+            if (this.isQueueRefreshing) {
+                console.warn("asked to refresh queue view, but alreayd refreshing");
+                return;
+            }
+            
+            // mark so if called 2nd time during refresh we know
+            this.isQueueRefreshing = true;
+            
             var hdr = $('<tr><th>Id</th><th>Phone</th><th>Beer #</th><th>Slot</th>' + 
                 '<th>Status</th><th>Start Time</th><th>End Time</th><th>Duration</th></tr>');
             var tableEl = $("#" + this.id + " .table-queue");
@@ -849,6 +1198,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     cursor.continue();
                 }
                 else {
+                    that.isQueueRefreshing = false;
                     console.log("done with cursor. no more records.");
                 }
             };
@@ -977,7 +1327,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 var res = evt.currentTarget.result;
                 
                 // create users table
-                if (false) {
+                if (true) {
                     if (res.objectStoreNames.contains(that.DB_STORE_NAME)) {
                        // delete it
                        res.deleteObjectStore(that.DB_STORE_NAME);
@@ -1054,6 +1404,19 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             }
             req.onsuccess = function(evt) {
                 console.log("getQueue. got success. evt:", evt, "evt.target.result:", evt.target.result);
+                var res = evt.target.result;
+                if (callback) callback(res);
+            }
+        },
+        wipeQueue: function(callback) {
+            // delete all records
+            var store = this.getObjectStore(this.DB_STORE_NAME_QUEUE, 'readwrite');
+            var req = store.clear();
+            if (req == null) {
+                callback(null);
+            }
+            req.onsuccess = function(evt) {
+                console.log("wipeQueue. got success. evt:", evt, "evt.target.result:", evt.target.result);
                 var res = evt.target.result;
                 if (callback) callback(res);
             }
@@ -1355,148 +1718,6 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             chilipeppr.publish('/com-chilipeppr-widget-3dviewer/viewextents' );
             
         },
-        createText: function(text, options) {
-            
-            // taken from http://threejs.org/examples/webgl_geometry_text.html
-            
-            /*
-			textGeo = new THREE.TextGeometry( text, {
-
-				font: options.font ? options.font : "",
-
-				size: size,
-				height: height,
-				curveSegments: curveSegments,
-
-				bevelThickness: bevelThickness,
-				bevelSize: bevelSize,
-				bevelEnabled: bevelEnabled,
-
-				material: 0,
-				extrudeMaterial: 1
-
-			});
-
-			textGeo.computeBoundingBox();
-			textGeo.computeVertexNormals();
-
-			// "fix" side normals by removing z-component of normals for side faces
-			// (this doesn't work well for beveled geometry as then we lose nice curvature around z-axis)
-
-			if ( ! bevelEnabled ) {
-
-				var triangleAreaHeuristics = 0.1 * ( height * size );
-
-				for ( var i = 0; i < textGeo.faces.length; i ++ ) {
-
-					var face = textGeo.faces[ i ];
-
-					if ( face.materialIndex == 1 ) {
-
-						for ( var j = 0; j < face.vertexNormals.length; j ++ ) {
-
-							face.vertexNormals[ j ].z = 0;
-							face.vertexNormals[ j ].normalize();
-
-						}
-
-						var va = textGeo.vertices[ face.a ];
-						var vb = textGeo.vertices[ face.b ];
-						var vc = textGeo.vertices[ face.c ];
-
-						var s = THREE.GeometryUtils.triangleArea( va, vb, vc );
-
-						if ( s > triangleAreaHeuristics ) {
-
-							for ( var j = 0; j < face.vertexNormals.length; j ++ ) {
-
-								face.vertexNormals[ j ].copy( face.normal );
-
-							}
-
-						}
-
-					}
-
-				}
-
-			}
-
-			var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-
-			textMesh1 = new THREE.Mesh( textGeo, material );
-
-			textMesh1.position.x = centerOffset;
-			textMesh1.position.y = hover;
-			textMesh1.position.z = 0;
-
-			textMesh1.rotation.x = 0;
-			textMesh1.rotation.y = Math.PI * 2;
-
-			group.add( textMesh1 );
-
-			if ( mirror ) {
-
-				textMesh2 = new THREE.Mesh( textGeo, material );
-
-				textMesh2.position.x = centerOffset;
-				textMesh2.position.y = -hover;
-				textMesh2.position.z = height;
-
-				textMesh2.rotation.x = Math.PI;
-				textMesh2.rotation.y = Math.PI * 2;
-
-				group.add( textMesh2 );
-
-			}
-			*/
-
-		},
-        /**
-         * Pass in vals {
-         *   color: 0xff0000, // default 0x999999
-         *   text: "asdf",
-         *   height: 10, // default 1
-         *   size: 5, // default 10
-         *   x: 0,
-         *   y: 0,
-         *   z: 0,
-         * }
-         */
-        makeText: function(vals) {
-            var shapes, geom, mat, mesh;
-            
-            console.log("Do we have the global ThreeHelvetiker font:", ThreeHelvetiker);
-            console.log("THREE.FontUtils:", THREE.FontUtils);
-            
-            if (!THREE.FontUtils) {
-                console.error("THREE.FontUtils not defined per bug in r73 of three.js. So not making text.");
-                return;
-            }
-            
-            THREE.FontUtils.loadFace(ThreeHelvetiker);
-            shapes = THREE.FontUtils.generateShapes( vals.text, {
-                font: "helvetiker",
-                height: vals.height ? vals.height : 1,
-                //weight: "normal",
-                size: vals.size ? vals.size : 10
-            } );
-            geom = new THREE.ShapeGeometry( shapes );
-            mat = new THREE.MeshPhongMaterial({
-                color: vals.color ? vals.color : 0x999999,
-                side: THREE.DoubleSide,
-                // transparent: true,
-                // opacity: vals.opacity ? vals.opacity : 0.5,
-            });
-            mesh = new THREE.Mesh( geom, mat );
-            
-            mesh.position.x = vals.x;
-            mesh.position.y = vals.y;
-            mesh.position.z = vals.z;
-            
-            return mesh;
-            
-        },
         onInit3dSuccess: function () {
             console.log("onInit3dSuccess. That means we finally got an object back.");
             this.clear3dViewer();
@@ -1757,6 +1978,221 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             });
 
         },
+        gcodeZipwhipLogo: `
+(Gcode generated by ChiliPeppr Svg2Gcode Widget)
+G21 (mm)
+G0 X-13.361 Y33.000
+M3 (laser on)
+G1 X-27.986 Y33.000
+G1 X-27.986 Y32.995
+G1 X-28.404 Y32.995
+G1 X-28.836 Y32.996
+G1 X-29.282 Y32.997
+G1 X-29.739 Y32.997
+G1 X-30.209 Y32.998
+G1 X-30.691 Y32.998
+G1 X-31.183 Y32.999
+G1 X-31.686 Y32.999
+G1 X-32.198 Y33.000
+G1 X-32.720 Y33.000
+G1 X-33.251 Y33.000
+G1 X-33.790 Y33.000
+G1 X-35.192 Y32.916
+G1 X-36.500 Y32.673
+G1 X-37.714 Y32.281
+G1 X-38.834 Y31.754
+G1 X-39.858 Y31.102
+G1 X-40.787 Y30.338
+G1 X-41.621 Y29.473
+G1 X-42.358 Y28.520
+G1 X-42.998 Y27.490
+G1 X-43.541 Y26.395
+G1 X-43.986 Y25.246
+G1 X-44.332 Y24.057
+G1 X-44.538 Y23.216
+G1 X-44.735 Y22.401
+G1 X-44.937 Y21.561
+G1 X-45.159 Y20.644
+G1 X-45.415 Y19.600
+G1 X-45.717 Y18.376
+G1 X-46.079 Y16.922
+G1 X-46.516 Y15.187
+G1 X-47.042 Y13.119
+G1 X-47.669 Y10.668
+G1 X-48.412 Y7.781
+G1 X-49.284 Y4.408
+G1 X-49.287 Y4.396
+G1 X-49.289 Y4.384
+G1 X-49.292 Y4.372
+G1 X-49.295 Y4.359
+G1 X-49.298 Y4.347
+G1 X-49.302 Y4.334
+G1 X-49.305 Y4.322
+G1 X-49.308 Y4.310
+G1 X-49.311 Y4.298
+G1 X-49.315 Y4.287
+G1 X-49.318 Y4.275
+G1 X-49.321 Y4.265
+G1 X-49.325 Y4.249
+G1 X-49.328 Y4.233
+G1 X-49.331 Y4.217
+G1 X-49.334 Y4.201
+G1 X-49.337 Y4.185
+G1 X-49.340 Y4.170
+G1 X-49.342 Y4.154
+G1 X-49.345 Y4.138
+G1 X-49.347 Y4.123
+G1 X-49.350 Y4.108
+G1 X-49.352 Y4.092
+G1 X-49.355 Y4.077
+G1 X-52.949 Y-9.844
+G1 X-52.962 Y-9.924
+G1 X-52.988 Y-10.137
+G1 X-53.000 Y-10.444
+G1 X-52.975 Y-10.804
+G1 X-52.889 Y-11.176
+G1 X-52.717 Y-11.523
+G1 X-52.436 Y-11.802
+G1 X-52.020 Y-11.974
+G1 X-51.446 Y-12.000
+G1 X-50.689 Y-11.839
+G1 X-49.724 Y-11.450
+G1 X-48.529 Y-10.795
+G1 X-47.854 Y-10.384
+G1 X-47.124 Y-9.941
+G1 X-46.349 Y-9.470
+G1 X-45.535 Y-8.976
+G1 X-44.690 Y-8.464
+G1 X-43.823 Y-7.938
+G1 X-42.941 Y-7.404
+G1 X-42.051 Y-6.865
+G1 X-41.163 Y-6.327
+G1 X-40.283 Y-5.794
+G1 X-39.420 Y-5.272
+G1 X-38.581 Y-4.765
+G1 X-28.009 Y-4.765
+G1 X-28.009 Y-4.763
+G1 X-27.592 Y-4.764
+G1 X-27.161 Y-4.764
+G1 X-26.717 Y-4.764
+G1 X-26.259 Y-4.764
+G1 X-25.789 Y-4.764
+G1 X-25.308 Y-4.764
+G1 X-24.815 Y-4.765
+G1 X-24.312 Y-4.765
+G1 X-23.799 Y-4.765
+G1 X-23.276 Y-4.765
+G1 X-22.745 Y-4.765
+G1 X-22.206 Y-4.765
+G1 X-20.801 Y-4.681
+G1 X-19.491 Y-4.437
+G1 X-18.275 Y-4.044
+G1 X-17.154 Y-3.516
+G1 X-16.128 Y-2.862
+G1 X-15.198 Y-2.097
+G1 X-14.364 Y-1.230
+G1 X-13.627 Y-0.275
+G1 X-12.987 Y0.758
+G1 X-12.444 Y1.856
+G1 X-12.000 Y3.007
+G1 X-11.653 Y4.200
+G1 X-11.595 Y4.433
+G1 X-11.435 Y5.070
+G1 X-11.184 Y6.067
+G1 X-10.854 Y7.380
+G1 X-10.455 Y8.966
+G1 X-9.999 Y10.782
+G1 X-9.495 Y12.783
+G1 X-8.956 Y14.927
+G1 X-8.391 Y17.170
+G1 X-7.813 Y19.468
+G1 X-7.231 Y21.778
+G1 X-6.657 Y24.057
+G1 X-6.399 Y25.441
+G1 X-6.297 Y26.717
+G1 X-6.350 Y27.881
+G1 X-6.556 Y28.932
+G1 X-6.910 Y29.868
+G1 X-7.411 Y30.686
+G1 X-8.057 Y31.384
+G1 X-8.844 Y31.960
+G1 X-9.771 Y32.412
+G1 X-10.834 Y32.737
+G1 X-12.031 Y32.934
+G1 X-13.361 Y33.000
+M5 (laser off)
+G0 X-14.441 Y22.613
+M3 (laser on)
+G1 X-14.441 Y22.613
+G1 X-14.435 Y23.259
+G1 X-14.514 Y23.876
+G1 X-14.674 Y24.460
+G1 X-14.910 Y25.004
+G1 X-15.215 Y25.504
+G1 X-15.584 Y25.954
+G1 X-16.013 Y26.350
+G1 X-16.496 Y26.685
+G1 X-17.027 Y26.955
+G1 X-17.601 Y27.155
+G1 X-18.214 Y27.278
+G1 X-18.859 Y27.320
+G1 X-35.238 Y27.320
+G1 X-37.014 Y20.603
+G1 X-25.242 Y20.603
+G1 X-40.206 Y8.933
+G1 X-40.396 Y8.749
+G1 X-40.574 Y8.558
+G1 X-40.737 Y8.360
+G1 X-40.888 Y8.150
+G1 X-41.024 Y7.928
+G1 X-41.147 Y7.691
+G1 X-41.256 Y7.438
+G1 X-41.351 Y7.165
+G1 X-41.431 Y6.871
+G1 X-41.498 Y6.553
+G1 X-41.549 Y6.210
+G1 X-41.586 Y5.839
+G1 X-41.593 Y5.191
+G1 X-41.513 Y4.569
+G1 X-41.354 Y3.978
+G1 X-41.119 Y3.425
+G1 X-40.815 Y2.916
+G1 X-40.447 Y2.455
+G1 X-40.019 Y2.050
+G1 X-39.537 Y1.705
+G1 X-39.007 Y1.427
+G1 X-38.433 Y1.221
+G1 X-37.821 Y1.093
+G1 X-37.176 Y1.049
+G1 X-36.513 Y1.049
+G1 X-35.613 Y1.049
+G1 X-34.508 Y1.050
+G1 X-33.232 Y1.050
+G1 X-31.817 Y1.050
+G1 X-30.296 Y1.050
+G1 X-28.702 Y1.050
+G1 X-27.066 Y1.050
+G1 X-25.423 Y1.050
+G1 X-23.804 Y1.050
+G1 X-22.243 Y1.051
+G1 X-20.772 Y1.051
+G1 X-18.895 Y8.040
+G1 X-30.415 Y8.040
+G1 X-16.168 Y19.177
+G1 X-15.934 Y19.394
+G1 X-15.714 Y19.613
+G1 X-15.509 Y19.837
+G1 X-15.320 Y20.070
+G1 X-15.148 Y20.314
+G1 X-14.992 Y20.573
+G1 X-14.854 Y20.850
+G1 X-14.733 Y21.148
+G1 X-14.631 Y21.470
+G1 X-14.548 Y21.819
+G1 X-14.484 Y22.199
+G1 X-14.441 Y22.613
+M5 (laser off)
+`,
 
     }
 });

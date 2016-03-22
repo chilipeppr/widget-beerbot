@@ -4,6 +4,11 @@
    
 }
 
+#com-zipwhip-widget-texterator .panel-body {
+   max-height:300px;
+   overflow-y: auto;
+}
+
 #com-zipwhip-widget-texterator .nav-tabs>li>a {
     padding: 2px 6px;
 }
