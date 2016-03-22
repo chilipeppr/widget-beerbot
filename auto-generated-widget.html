@@ -353,12 +353,16 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     // See crbug.com/110938.
                     videoEl.onloadedmetadata = function(e) {
                       // Ready to go. Do some stuff.
-                      console.log("got onloadedmetadata. e:", e);
+                      console.log("video. got onloadedmetadata. e:", e);
                     };
+                    
+                    videoEl.addEventListener('canplay', function(ev){
+                      console.log("video seems to be playing. got canplay.");
+                    }, false);
                 }, this.camError);
         },
         camError: function(err) {
-            console.error("Got err on initting cam. err:", err);
+            console.error("video. Got err on initting cam. err:", err);
         },
         camTakePicture: function() {
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
@@ -367,18 +371,44 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
             var width = context.canvas.clientWidth;
             var height = context.canvas.clientHeight;
-            console.log("width:", width, ", height:", height);
+            console.log("video. width:", width, ", height:", height);
             // if (width && height) {
-            // canvas.width = width;
-            // canvas.height = height;
-            // context.drawImage(video, 0, 0, width, height);
+            canvas.width = width;
+            canvas.height = height;
+            context.drawImage(this.videoEl, 0, 0, width, height);
             
-            // var data = canvas.toDataURL('image/png');
-            // photo.setAttribute('src', data);
+            var data = canvas.toDataURL('image/png');
+            var photo = document.getElementById('com-chilipeppr-texterator-uservideo-photo');
+            photo.setAttribute('src', data);
+            console.log("video. done taking picture.");
             // } else {
             // clearphoto();
             // }
         },
+        sendImage: function() {
+			var blobBin = atob(document.getElementById("final-image").src.split(',')[1]);
+			var array = [];
+			for(var i = 0; i < blobBin.length; i++) {
+			    array.push(blobBin.charCodeAt(i));
+			}
+			var file=new Blob([new Uint8Array(array)], {type: 'image/png'});
+
+
+			var formdata = new FormData();
+			formdata.append("photo", file);
+			formdata.append("phone", $('#phone').val());
+			$.ajax({
+			   url: "/send",
+			   type: "POST",
+			   data: formdata,
+			   processData: false,
+			   contentType: false,
+			}).done(function(respond){
+			  totalFiles = respond.total;
+			  url = respond.url;
+			  document.location = '#final/'+$('#phone').val();
+			});
+		},
         sendTestMMS: function() {
          
         },
@@ -2371,7 +2401,11 @@ M5 (laser off)
                     <button type="button" class="btn xbtn-xs btn-default btn-takepic">Take Picture</button>
                     <button type="button" class="btn xbtn-xs btn-default btn-mms">Send MMS</button>
 
+                    Canvas
                     <canvas id="com-chilipeppr-texterator-uservideo-canvas"></canvas>
+                    
+                    Photo
+                    <img id="com-chilipeppr-texterator-uservideo-photo"></img>
                 </div>
 
                 <!-- Tab 4. Laser -->
