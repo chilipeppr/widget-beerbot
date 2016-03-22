@@ -281,6 +281,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.log("I am done being initted.");
         },
         
+        videoEl: null,
         /**
          * Webcam snapshot methods
          */
@@ -293,10 +294,12 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // Compatibility shim
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             
+            var that = this;
             navigator.getUserMedia({video: true, audio: true}, 
                 function(localMediaStream) {
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
+                    that.videoEl = videoEl;
 
                     // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
                     // See crbug.com/110938.
@@ -312,7 +315,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         camTakePicture: function() {
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
-            console.log("context:", context);
+            console.log("videoEl:", this.videoEl, "context:", context);
             
             var width = context.canvas.clientWidth;
             var height = context.canvas.clientHeight;
