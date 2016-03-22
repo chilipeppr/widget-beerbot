@@ -330,7 +330,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             context.drawImage(this.videoEl, 0, 0, width, height);
             
             // overlay logo over the canvas
-            var logo = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
+            var logo = document.getElementById('com-chilipeppr-texterator-uservideo-logo');
+            console.log("logo:", logo);
+            canvas.height += logo.height;
+            // draw at bottom of image
+            context.drawImage(logo, 0, height, width);
             
             var data = canvas.toDataURL('image/png');
             var photo = document.getElementById('com-chilipeppr-texterator-uservideo-photo');
