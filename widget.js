@@ -314,6 +314,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             var context = canvas.getContext('2d');
             console.log("context:", context);
             
+            var width = context.canvas.clientWidth;
+            var height = context.canvas.clientHeight;
+            console.log("width:", width, ", height:", height);
             // if (width && height) {
             // canvas.width = width;
             // canvas.height = height;
