@@ -286,6 +286,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
          */
         setupCam: function() {
             
+            // setup test send mms button
+            $('#' + this.id + ' .btn-mms').click(this.sendTestMMS.bind(this));
+            $('#' + this.id + ' .btn-takepic').click(this.camTakePicture.bind(this));
+            
             // Compatibility shim
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             
@@ -304,6 +308,25 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         },
         camError: function(err) {
             console.error("Got err on initting cam. err:", err);
+        },
+        camTakePicture: function() {
+            var canvas = document.getElementById('#com-chilipeppr-texterator-uservideo-canvas');
+            var context = canvas.getContext('2d');
+            console.log("context:", context);
+            
+            // if (width && height) {
+            // canvas.width = width;
+            // canvas.height = height;
+            // context.drawImage(video, 0, 0, width, height);
+            
+            // var data = canvas.toDataURL('image/png');
+            // photo.setAttribute('src', data);
+            // } else {
+            // clearphoto();
+            // }
+        },
+        sendTestMMS: function() {
+         
         },
         
         /**
