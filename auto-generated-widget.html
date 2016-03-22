@@ -377,6 +377,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             canvas.height = height;
             context.drawImage(this.videoEl, 0, 0, width, height);
             
+            // overlay logo over the canvas
+            var logo = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
+            
             var data = canvas.toDataURL('image/png');
             var photo = document.getElementById('com-chilipeppr-texterator-uservideo-photo');
             photo.setAttribute('src', data);
@@ -384,6 +387,55 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // } else {
             // clearphoto();
             // }
+        },
+        sendTestMMS: function() {
+            var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
+            var dataUrl = canvas.toDataURL('image/png');
+            this.sendMmsMessage(dataUrl, "3134147502");
+        },
+        sendMmsMessage: function(imageDataUrl, toPhone) {
+            var blobBin = atob(imageDataUrl.split(',')[1]);
+            var array = [];
+            for(var i = 0; i < blobBin.length; i++) {
+                array.push(blobBin.charCodeAt(i));
+            }
+            var file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+    
+            var formdata = new FormData();
+            formdata.append("photo", file);
+            
+            // this gets called with the active sessionkey
+            var onGotSessionKey = function(payload) {
+                console.log("got sessionkey. payload:", payload);
+                var sessionkey = payload.sessionkey;
+                $.ajax({
+                    url: "http://landline.zipwhip.com/messaging/send/?session=" + sessionkey + "&to=" + toPhone + "&body=this+is+my+body",
+                    type: "POST",
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                }).done(function(response){
+                    console.log('server response', response)
+                });
+            }
+            // get sessionkey from Zipwhip Recv Text widget
+            var request = {
+                callback: onGotSessionKey
+            }
+            chilipeppr.publish("/com-chilipeppr-widget-recvtext/getSessionKey", request);
+            
+            
+        },
+        uploadImage: function() {
+            // WebKitFormBoundaryOBpwlhFMzHEflePF
+            // https://landline.zipwhip.com/hostedContent/save/verbose/?responseType=text&session=534bcea8-2595-4893-a4ce-98831b67d956:303273303    
+            // {"response":[{"fileName":"beerbot.png","fileSizeBytes":289037,"mimeType":"image/png","storageKey":"3a844b40-41b1-448a-9da7-714a07971018"}],"success":true}
+            // https://landline.zipwhip.com/hostedContent/get/?storageKey=3a844b40-41b1-448a-9da7-714a07971018&session=534bcea8-2595-4893-a4ce-98831b67d956:303273303
+            // sending....
+            // WebKitFormBoundarym3jNTtZY9atv56SD
+            // https://landline.zipwhip.com/messaging/send?session=534bcea8-2595-4893-a4ce-98831b67d956:303273303&to=+13134147502&body=&contentTypeOverride=text%2Fhtml
+            // {"response":{"id":712412071737958400,"status":"queued"},"success":true}
+            
         },
         sendImage: function() {
 			var blobBin = atob(document.getElementById("final-image").src.split(',')[1]);
@@ -409,9 +461,6 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
 			  document.location = '#final/'+$('#phone').val();
 			});
 		},
-        sendTestMMS: function() {
-         
-        },
         
         /**
          * Laser Methods
@@ -2401,10 +2450,10 @@ M5 (laser off)
                     <button type="button" class="btn xbtn-xs btn-default btn-takepic">Take Picture</button>
                     <button type="button" class="btn xbtn-xs btn-default btn-mms">Send MMS</button>
 
-                    Canvas
+                    <p>Canvas</p>
                     <canvas id="com-chilipeppr-texterator-uservideo-canvas"></canvas>
-                    
-                    Photo
+                    <img id="com-chilipeppr-texterator-uservideo-logo" xclass="workspace-img" src="https://github.com/chilipeppr/workspace-texterator/raw/master/logo.png">
+                    <p>Photo</p>
                     <img id="com-chilipeppr-texterator-uservideo-photo"></img>
                 </div>
 
