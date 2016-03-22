@@ -343,7 +343,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         sendTestMMS: function() {
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var dataUrl = canvas.toDataURL('image/png');
-            this.sendMmsMessage(dataUrl, "3134147502");
+            this.sendMmsMessage(dataUrl, "13134147502");
         },
         sendMmsMessage: function(imageDataUrl, toPhone) {
             var blobBin = atob(imageDataUrl.split(',')[1]);
