@@ -369,8 +369,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             var context = canvas.getContext('2d');
             console.log("videoEl:", this.videoEl, "context:", context);
             
-            var width = context.canvas.clientWidth;
-            var height = context.canvas.clientHeight;
+            var width = this.videoEl.videoWidth; //context.canvas.clientWidth;
+            var height = this.videoEl.videoHeight; //context.canvas.clientHeight;
             console.log("video. width:", width, ", height:", height);
             // if (width && height) {
             canvas.width = width;
