@@ -291,7 +291,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
             navigator.getUserMedia({video: true, audio: true}, 
                 function(localMediaStream) {
-                    var videoEl = document.querySelector('#' + this.id + ' .uservideo');
+                    var videoEl = document.querySelector('com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
 
                     // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
