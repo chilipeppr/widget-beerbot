@@ -378,9 +378,6 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             var height = this.videoEl.videoHeight; //context.canvas.clientHeight;
             console.log("video. width:", width, ", height:", height);
             // if (width && height) {
-            canvas.width = width;
-            canvas.height = height + logoEl.height();
-            context.drawImage(this.videoEl, 0, 0, width, height);
             
             var ratio = width / logo.width();
             var newLogoWidth = parseInt(logo.width() * ratio);
@@ -388,6 +385,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.log("ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
             
             //canvas.height += logoEl.height();
+            canvas.width = width;
+            canvas.height = height + newLogoHeight;
+            console.log("canvas width:", canvas.width, "height:", canvas.height);
+            context.drawImage(this.videoEl, 0, 0, width, height);
             // draw at bottom of image
             context.drawImage(logo, 0, height, newLogoWidth, newLogoHeight);
             
