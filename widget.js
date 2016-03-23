@@ -347,6 +347,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.log("localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getVideoTracks());
             // this.localMediaStream.getVideoTracks()[0].start();
             // this.localMediaStream.active = true;
+            this.localMediaStream.getTracks()[0].start();
 
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
