@@ -184,7 +184,7 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
     setTimeout(function() {
         var ssEl = $('#com-zipwhip-widget-texterator-screensaver').detach().appendTo("body");
         // $("body").append(ssEl);
-    }, 3000);
+    }, 8000);
 
 } /*end_test*/ );
 
