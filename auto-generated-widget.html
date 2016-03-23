@@ -506,8 +506,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         },
         camStop: function() {
             console.log("camStop. localMediaStream:", this.localMediaStream);
-            this.localMediaStream.getTracks()[0].stop();
-            console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
+            if (this.localMediaStream) {
+                this.localMediaStream.getTracks()[0].stop();
+                console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
+            }
         },
         sendTestMMS: function() {
             //this.camTakePicture();
