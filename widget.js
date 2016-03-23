@@ -320,6 +320,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // Compatibility shim
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             
+            return;
             var that = this;
             navigator.getUserMedia({video: true, audio: false}, 
                 function(localMediaStream) {
@@ -338,6 +339,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     videoEl.addEventListener('canplay', function(ev){
                       console.log("video seems to be playing. got canplay.");
                       localMediaStream.getTracks()[0].stop();
+                      
                     }, false);
                 }, this.camError);
         },
