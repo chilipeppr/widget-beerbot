@@ -396,8 +396,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         },
         
         // videoEl: null,
-        // localMediaStream: null,
+        localMediaStream: null,
         //navigator: null,
+        stopAfterCanPlay: false, // on init, this will stop vid track
         /**
          * Webcam snapshot methods
          */
@@ -410,7 +411,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // Compatibility shim
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             
-            return;
+            // return;
             var that = this;
             navigator.getUserMedia({video: true, audio: false}, 
                 function(localMediaStream) {
@@ -426,11 +427,16 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                       console.log("video. got onloadedmetadata. e:", e);
                     };
                     
+                    that.stopAfterCanPlay = true;
+                    
+                    videoEl.addEventListener('canplay', that.camOnCanPlay.bind(that));
+                    /*
                     videoEl.addEventListener('canplay', function(ev){
                       console.log("video seems to be playing. got canplay.");
                       localMediaStream.getTracks()[0].stop();
                       
                     }, false);
+                    */
                 }, this.camError);
         },
         camError: function(err) {
@@ -441,52 +447,66 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             navigator.getUserMedia(
                 {video: true, audio: false}, 
                 function(localMediaStream) {
-                    
+                    that.localMediaStream = localMediaStream;
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
                     
-                    videoEl.addEventListener('canplay', function(ev){
-                        console.log("video seems to be playing. got canplay.");
-                        
-                        var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
-                        var context = canvas.getContext('2d');
-                        //console.log("videoEl:", videoEl, "context:", context);
-                        
-                        // overlay logo over the canvas
-                        var logo = document.getElementById('com-chilipeppr-texterator-uservideo-logo');
-                        var logoEl = $(logo);
-                        // console.log("logo:", logo, "logoEl", logoEl);
-                        
-                        var width = videoEl.videoWidth; 
-                        var height = videoEl.videoHeight; 
-                        console.log("video. width:", width, ", height:", height);
-                        
-                        var ratio = width / logoEl.width();
-                        var newLogoWidth = parseInt(logoEl.width() * ratio);
-                        var newLogoHeight = parseInt(logoEl.height() * ratio);
-                        console.log("ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
-                        
-                        canvas.width = width;
-                        canvas.height = height + newLogoHeight;
-                        console.log("canvas width:", canvas.width, "height:", canvas.height);
-                        context.drawImage(videoEl, 0, 0, width, height);
-                        
-                        // draw at bottom of image
-                        context.drawImage(logo, 0, height, newLogoWidth, newLogoHeight);
-                        
-                        var data = canvas.toDataURL('image/png');
-                        var photo = document.getElementById('com-chilipeppr-texterator-uservideo-photo');
-                        photo.setAttribute('src', data);
-                        console.log("video. done taking picture.");
-
-                        localMediaStream.getTracks()[0].stop();
-                        console.log("stopped localMediaStream:", localMediaStream, "tracks:", localMediaStream.getTracks());
-
-                    }, false);
+                    // now the camOnCanPlay will get called automatically
+                    console.log("got user media and local stream. camOnCanPlay should get called automatically next.");
                 }, 
                 that.camError
             );
 
+        },
+        camOnCanPlayCallback: null, // can set a callback afterwards
+        camOnCanPlay: function(ev) {
+            console.log("video seems to be playing. got canplay. args:", arguments);
+            
+            if (this.stopAfterCanPlay) {
+                this.camStop();
+                return;
+            }
+            
+            var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
+                    
+            var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
+            var context = canvas.getContext('2d');
+            //console.log("videoEl:", videoEl, "context:", context);
+            
+            // overlay logo over the canvas
+            var logo = document.getElementById('com-chilipeppr-texterator-uservideo-logo');
+            var logoEl = $(logo);
+            // console.log("logo:", logo, "logoEl", logoEl);
+            
+            var width = videoEl.videoWidth; 
+            var height = videoEl.videoHeight; 
+            console.log("video. width:", width, ", height:", height);
+            
+            var ratio = width / logoEl.width();
+            var newLogoWidth = parseInt(logoEl.width() * ratio);
+            var newLogoHeight = parseInt(logoEl.height() * ratio);
+            console.log("ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
+            
+            canvas.width = width;
+            canvas.height = height + newLogoHeight;
+            console.log("canvas width:", canvas.width, "height:", canvas.height);
+            context.drawImage(videoEl, 0, 0, width, height);
+            
+            // draw at bottom of image
+            context.drawImage(logo, 0, height, newLogoWidth, newLogoHeight);
+            
+            var data = canvas.toDataURL('image/png');
+            var photo = document.getElementById('com-chilipeppr-texterator-uservideo-photo');
+            photo.setAttribute('src', data);
+            console.log("video. done taking picture.");
+
+            this.camStop();
+            
+        },
+        camStop: function() {
+            this.localMediaStream.getTracks()[0].stop();
+            console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
+    
         },
         sendTestMMS: function() {
             //this.camTakePicture();
