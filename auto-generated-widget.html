@@ -437,6 +437,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.error("video. Got err on initting cam. err:", err);
         },
         camTakePicture: function() {
+            var that = this;
             navigator.getUserMedia(
                 {video: true, audio: false}, 
                 function(localMediaStream) {
@@ -449,7 +450,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                         
                         var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
                         var context = canvas.getContext('2d');
-                        //console.log("videoEl:", this.videoEl, "context:", context);
+                        //console.log("videoEl:", videoEl, "context:", context);
                         
                         // overlay logo over the canvas
                         var logo = document.getElementById('com-chilipeppr-texterator-uservideo-logo');
@@ -468,7 +469,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                         canvas.width = width;
                         canvas.height = height + newLogoHeight;
                         console.log("canvas width:", canvas.width, "height:", canvas.height);
-                        context.drawImage(this.videoEl, 0, 0, width, height);
+                        context.drawImage(videoEl, 0, 0, width, height);
                         
                         // draw at bottom of image
                         context.drawImage(logo, 0, height, newLogoWidth, newLogoHeight);
@@ -479,11 +480,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                         console.log("video. done taking picture.");
 
                         localMediaStream.getTracks()[0].stop();
-                        console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
+                        console.log("stopped localMediaStream:", localMediaStream, "tracks:", localMediaStream.getTracks());
 
                     }, false);
                 }, 
-                this.camError
+                that.camError
             );
 
         },
