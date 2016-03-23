@@ -337,7 +337,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     
                     videoEl.addEventListener('canplay', function(ev){
                       console.log("video seems to be playing. got canplay.");
-                      this.localMediaStream.getTracks()[0].stop();
+                      localMediaStream.getTracks()[0].stop();
                     }, false);
                 }, this.camError);
         },
