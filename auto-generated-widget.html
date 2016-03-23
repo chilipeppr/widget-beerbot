@@ -507,10 +507,17 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         camStop: function() {
             console.log("camStop. localMediaStream:", this.localMediaStream);
             if (this.localMediaStream) {
-                this.localMediaStream.getTracks()[0].stop();
+                // this.localMediaStream.getTracks()[0].stop();
+                this.localMediaStream.getAudioTracks().forEach(function(track) {
+                    track.stop();
+                });
+        
+                this.localMediaStream.getVideoTracks().forEach(function(track) {
+                    track.stop();
+                });
                 console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
                 var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
-                videoEl.src = window.webkitURL.createObjectURL(null);
+                // videoEl.src = window.webkitURL.createObjectURL(null);
             }
         },
         sendTestMMS: function() {
