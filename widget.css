@@ -35,6 +35,7 @@
     font-size: 40px;
     background-color: white;
     text-align: center;
+    z-index: 2;
 }
 
 #com-zipwhip-widget-texterator-screensaver .centering-container {
