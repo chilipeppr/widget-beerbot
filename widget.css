@@ -1,12 +1,10 @@
 /* CSS for ChiliPeppr Widget */
 
-#com-zipwhip-widget-texterator {
-   
-}
+#com-zipwhip-widget-texterator {}
 
 #com-zipwhip-widget-texterator .panel-body {
-   max-height:300px;
-   overflow-y: auto;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 #com-zipwhip-widget-texterator .nav-tabs>li>a {
@@ -14,15 +12,59 @@
 }
 
 #com-zipwhip-widget-texterator .tab-pane {
-    padding-top:10px;
+    padding-top: 10px;
 }
 
 #com-zipwhip-widget-texterator .table-condensed {
-    font-size:11px;
+    font-size: 11px;
 }
 
 .btn-laserit {
-    border-top-left-radius:0;
-    border-bottom-left-radius:0;
-    border:0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border: 0;
+}
+
+#com-zipwhip-widget-texterator-screensaver {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    font-size: 40px;
+    background-color: white;
+    text-align: center;
+}
+
+#com-zipwhip-widget-texterator-screensaver .centering-container {
+    height: 100%;
+    position: relative;
+    text-align: center;
+}
+#com-zipwhip-widget-texterator-screensaver .calltoaction {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    /*margin-top: -80px;*/
+    /*border:1px solid red;*/
+    font-size: 80px;
+    color: #666;
+}
+
+#com-zipwhip-widget-texterator-screensaver .cta-hilite {
+    font-weight: bold;
+    transition: color 2s, font-size 2s;
+}
+
+#com-zipwhip-widget-texterator-screensaver .cta-hilite.large {
+    color: #000;
+    font-size: 120px
+}
+.screensaver-img {
+    position: absolute;
+    top:10%;
+    left:50%;
+    transform: translateX(-50%); 
 }

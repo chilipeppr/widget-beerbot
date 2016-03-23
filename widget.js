@@ -179,6 +179,12 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
     $('#' + myWidget.id).css('margin', '20px');
     $('title').html(myWidget.name);
     // $('body').css("position", "relative");
+    
+    // move screensaver to last position
+    setTimeout(function() {
+        var ssEl = $('#com-zipwhip-widget-texterator-screensaver').detach().appendTo("body");
+        // $("body").append(ssEl);
+    }, 3000);
 
 } /*end_test*/ );
 
@@ -277,11 +283,30 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             this.setupUiFromLocalStorage();
             this.btnSetup();
             this.forkSetup();
+            // this.screenSaverAnim();
 
             console.log("I am done being initted.");
         },
         
+        screenSaverAnim: function() {
+            var that = this;
+            $('#com-zipwhip-widget-texterator-screensaver .cta-beer').addClass("large");
+            setTimeout(function() {
+                $('#com-zipwhip-widget-texterator-screensaver .cta-beer').removeClass("large");
+                setTimeout(function() {
+                    $('#com-zipwhip-widget-texterator-screensaver .cta-phone').addClass("large");
+                    setTimeout(function() {
+                        $('#com-zipwhip-widget-texterator-screensaver .cta-phone').removeClass("large");
+                        setTimeout(function() {
+                            that.screenSaverAnim();
+                        }, 4000);
+                    }, 3000);
+                }, 3000);
+            }, 3000);
+        },
+        
         videoEl: null,
+        localMediaStream: null,
         /**
          * Webcam snapshot methods
          */
@@ -300,6 +325,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
                     that.videoEl = videoEl;
+                    that.localMediaStream = localMediaStream;
 
                     // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
                     // See crbug.com/110938.
@@ -310,6 +336,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     
                     videoEl.addEventListener('canplay', function(ev){
                       console.log("video seems to be playing. got canplay.");
+                      
                     }, false);
                 }, this.camError);
         },
@@ -317,6 +344,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.error("video. Got err on initting cam. err:", err);
         },
         camTakePicture: function() {
+            this.localMediaStream.start();
+
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
             console.log("videoEl:", this.videoEl, "context:", context);
@@ -351,6 +380,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // } else {
             // clearphoto();
             // }
+            this.localMediaStream.stop();
+            console.log("stopped localMediaStream");
         },
         sendTestMMS: function() {
             //this.camTakePicture();

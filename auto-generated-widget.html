@@ -16,13 +16,11 @@
     <style type='text/css'>
 /* CSS for ChiliPeppr Widget */
 
-#com-zipwhip-widget-texterator {
-   
-}
+#com-zipwhip-widget-texterator {}
 
 #com-zipwhip-widget-texterator .panel-body {
-   max-height:300px;
-   overflow-y: auto;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 #com-zipwhip-widget-texterator .nav-tabs>li>a {
@@ -30,17 +28,61 @@
 }
 
 #com-zipwhip-widget-texterator .tab-pane {
-    padding-top:10px;
+    padding-top: 10px;
 }
 
 #com-zipwhip-widget-texterator .table-condensed {
-    font-size:11px;
+    font-size: 11px;
 }
 
 .btn-laserit {
-    border-top-left-radius:0;
-    border-bottom-left-radius:0;
-    border:0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border: 0;
+}
+
+#com-zipwhip-widget-texterator-screensaver {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    font-size: 40px;
+    background-color: white;
+    text-align: center;
+}
+
+#com-zipwhip-widget-texterator-screensaver .centering-container {
+    height: 100%;
+    position: relative;
+    text-align: center;
+}
+#com-zipwhip-widget-texterator-screensaver .calltoaction {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    /*margin-top: -80px;*/
+    /*border:1px solid red;*/
+    font-size: 80px;
+    color: #666;
+}
+
+#com-zipwhip-widget-texterator-screensaver .cta-hilite {
+    font-weight: bold;
+    transition: color 2s, font-size 2s;
+}
+
+#com-zipwhip-widget-texterator-screensaver .cta-hilite.large {
+    color: #000;
+    font-size: 120px
+}
+.screensaver-img {
+    position: absolute;
+    top:10%;
+    left:50%;
+    transform: translateX(-50%); 
 }
     </style>
 
@@ -227,6 +269,12 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
     $('#' + myWidget.id).css('margin', '20px');
     $('title').html(myWidget.name);
     // $('body').css("position", "relative");
+    
+    // move screensaver to last position
+    setTimeout(function() {
+        var ssEl = $('#com-zipwhip-widget-texterator-screensaver').detach().appendTo("body");
+        // $("body").append(ssEl);
+    }, 3000);
 
 } /*end_test*/ );
 
@@ -325,11 +373,30 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             this.setupUiFromLocalStorage();
             this.btnSetup();
             this.forkSetup();
+            // this.screenSaverAnim();
 
             console.log("I am done being initted.");
         },
         
+        screenSaverAnim: function() {
+            var that = this;
+            $('#com-zipwhip-widget-texterator-screensaver .cta-beer').addClass("large");
+            setTimeout(function() {
+                $('#com-zipwhip-widget-texterator-screensaver .cta-beer').removeClass("large");
+                setTimeout(function() {
+                    $('#com-zipwhip-widget-texterator-screensaver .cta-phone').addClass("large");
+                    setTimeout(function() {
+                        $('#com-zipwhip-widget-texterator-screensaver .cta-phone').removeClass("large");
+                        setTimeout(function() {
+                            that.screenSaverAnim();
+                        }, 4000);
+                    }, 3000);
+                }, 3000);
+            }, 3000);
+        },
+        
         videoEl: null,
+        localMediaStream: null,
         /**
          * Webcam snapshot methods
          */
@@ -348,6 +415,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
                     that.videoEl = videoEl;
+                    that.localMediaStream = localMediaStream;
 
                     // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
                     // See crbug.com/110938.
@@ -358,6 +426,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     
                     videoEl.addEventListener('canplay', function(ev){
                       console.log("video seems to be playing. got canplay.");
+                      
                     }, false);
                 }, this.camError);
         },
@@ -365,6 +434,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.error("video. Got err on initting cam. err:", err);
         },
         camTakePicture: function() {
+            this.localMediaStream.start();
+
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
             console.log("videoEl:", this.videoEl, "context:", context);
@@ -399,6 +470,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // } else {
             // clearphoto();
             // }
+            this.localMediaStream.stop();
+            console.log("stopped localMediaStream");
         },
         sendTestMMS: function() {
             //this.camTakePicture();
@@ -2502,6 +2575,18 @@ M5 (laser off)
 
         </div>
         
+        
+    </div>
+    <div id="com-zipwhip-widget-texterator-screensaver" class="hidden" style="">
+        <img class="screensaver-img" src="https://github.com/chilipeppr/workspace-texterator/raw/master/logo.png">
+        <div class="centering-container">
+            <p class="calltoaction">
+                Text 
+                <span class="cta-beer cta-hilite">Beer</span> 
+                to 
+                <span class="cta-phone cta-hilite">(844) 947-5000</span>
+            </p>
+        </div>
         
     </div>
     <div class="givemeacup well hidden" style="position:absolute;top:0px;xwidth:100%;margin:20px;font-size:40px;background-color:red;">
