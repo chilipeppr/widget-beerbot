@@ -278,26 +278,56 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             }
 
             this.setupTextListener();
-            this.setupCam();
             
             this.setupUiFromLocalStorage();
             this.btnSetup();
             this.forkSetup();
+            this.setupScreenSaver();
             // this.screenSaverAnim();
+            setTimeout(function() {
+                that.screenSaverShow();
+            }, 5000);
+
+            // setup cam last cuz it errors out
+            this.setupCam();
 
             console.log("I am done being initted.");
         },
         
+        setupScreenSaver: function() {
+            $('#' + this.id + ' .btn-screensaver').click(this.screenSaverShow.bind(this));
+            $('#' + this.id + "-screensaver .close2").click(this.onScreenSaverClose.bind(this));    
+        
+        },
+        onScreenSaverClose: function() {
+            console.log("got close on screensaver");
+            $('#com-zipwhip-widget-texterator-screensaver').addClass("hidden");
+            this.cancelAnim = true;
+        },
+        screenSaverShow: function() {
+            $('#com-zipwhip-widget-texterator-screensaver').removeClass("hidden");
+            
+            // cleanup and hide the resizer icon on the console widget
+            $('.ui-icon-gripsmall-diagonal-se').addClass("hidden");
+        },
+        cancelAnim: false,
         screenSaverAnim: function() {
+            
+            this.cancelAnim = false;
             var that = this;
             $('#com-zipwhip-widget-texterator-screensaver .cta-beer').addClass("large");
+            // if (that.cancelAnim) return;
             setTimeout(function() {
                 $('#com-zipwhip-widget-texterator-screensaver .cta-beer').removeClass("large");
+                if (that.cancelAnim) return;
                 setTimeout(function() {
                     $('#com-zipwhip-widget-texterator-screensaver .cta-phone').addClass("large");
+                    if (that.cancelAnim) return;
                     setTimeout(function() {
                         $('#com-zipwhip-widget-texterator-screensaver .cta-phone').removeClass("large");
+                        if (that.cancelAnim) return;
                         setTimeout(function() {
+                            if (that.cancelAnim) return;
                             that.screenSaverAnim();
                         }, 4000);
                     }, 3000);

@@ -55,16 +55,67 @@
 
 #com-zipwhip-widget-texterator-screensaver .cta-hilite {
     font-weight: bold;
-    transition: color 2s, font-size 2s;
+    /*transition: color 2s, font-size 2s;*/
+    /*transform: scale(0.5);*/
+    /*transition: all 2s ease-in-out;*/
 }
 
 #com-zipwhip-widget-texterator-screensaver .cta-hilite.large {
-    color: #000;
-    font-size: 120px
+    /*color: #000;*/
+    /*font-size: 120px*/
+    /*transform: scale(1.3);*/
+}
+#com-zipwhip-widget-texterator-screensaver .cta-hilite.anim1 {
+    animation: zoomInOut1 15s infinite;
+}
+#com-zipwhip-widget-texterator-screensaver .cta-hilite.anim2 {
+    animation: zoomInOut2 15s infinite;
+}
+#com-zipwhip-widget-texterator-screensaver .calltoaction.zipIn {
+    animation: fadeAndScale 1s;
 }
 .screensaver-img {
     position: absolute;
     top:10%;
     left:50%;
     transform: translateX(-50%); 
+}
+#com-zipwhip-widget-texterator-screensaver .close2 {
+    position: absolute;
+    right:10px;
+    top:10px;
+    padding:0px 2px;
+    margin:0;
+    font-size:16px;
+    /*border:1px solid red;*/
+    opacity: 0.1;
+    color:black;
+}
+#com-zipwhip-widget-texterator-screensaver .close2:hover {
+    opacity: 0.8;
+}
+@keyframes zoomInOut1 {
+  0%   { font-size: 80px; color: #666; }
+  10%  { font-size: 120px; color: #000; }
+  20%  { font-size: 120px; color: #000; }
+  30% { font-size: 80px; color: #666; }
+  100% { font-size: 80px; color: #666; }
+}
+@keyframes zoomInOut2 {
+  0%   { font-size: 80px; color: #666; }
+  30%   { font-size: 80px; color: #666; }
+  40%  { font-size: 120px; color: #000; }
+  50%  { font-size: 120px; color: #000; }
+  60% { font-size: 80px; color: #666; }
+  100% { font-size: 80px; color: #666; }
+}
+@keyframes fadeAndScale {
+    from {
+        opacity: 0;
+        transform: scale(.5, .5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1, 1);
+    }
 }

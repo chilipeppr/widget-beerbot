@@ -71,18 +71,69 @@
 
 #com-zipwhip-widget-texterator-screensaver .cta-hilite {
     font-weight: bold;
-    transition: color 2s, font-size 2s;
+    /*transition: color 2s, font-size 2s;*/
+    /*transform: scale(0.5);*/
+    /*transition: all 2s ease-in-out;*/
 }
 
 #com-zipwhip-widget-texterator-screensaver .cta-hilite.large {
-    color: #000;
-    font-size: 120px
+    /*color: #000;*/
+    /*font-size: 120px*/
+    /*transform: scale(1.3);*/
+}
+#com-zipwhip-widget-texterator-screensaver .cta-hilite.anim1 {
+    animation: zoomInOut1 15s infinite;
+}
+#com-zipwhip-widget-texterator-screensaver .cta-hilite.anim2 {
+    animation: zoomInOut2 15s infinite;
+}
+#com-zipwhip-widget-texterator-screensaver .calltoaction.zipIn {
+    animation: fadeAndScale 1s;
 }
 .screensaver-img {
     position: absolute;
     top:10%;
     left:50%;
     transform: translateX(-50%); 
+}
+#com-zipwhip-widget-texterator-screensaver .close2 {
+    position: absolute;
+    right:10px;
+    top:10px;
+    padding:0px 2px;
+    margin:0;
+    font-size:16px;
+    /*border:1px solid red;*/
+    opacity: 0.1;
+    color:black;
+}
+#com-zipwhip-widget-texterator-screensaver .close2:hover {
+    opacity: 0.8;
+}
+@keyframes zoomInOut1 {
+  0%   { font-size: 80px; color: #666; }
+  10%  { font-size: 120px; color: #000; }
+  20%  { font-size: 120px; color: #000; }
+  30% { font-size: 80px; color: #666; }
+  100% { font-size: 80px; color: #666; }
+}
+@keyframes zoomInOut2 {
+  0%   { font-size: 80px; color: #666; }
+  30%   { font-size: 80px; color: #666; }
+  40%  { font-size: 120px; color: #000; }
+  50%  { font-size: 120px; color: #000; }
+  60% { font-size: 80px; color: #666; }
+  100% { font-size: 80px; color: #666; }
+}
+@keyframes fadeAndScale {
+    from {
+        opacity: 0;
+        transform: scale(.5, .5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1, 1);
+    }
 }
     </style>
 
@@ -368,26 +419,56 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             }
 
             this.setupTextListener();
-            this.setupCam();
             
             this.setupUiFromLocalStorage();
             this.btnSetup();
             this.forkSetup();
+            this.setupScreenSaver();
             // this.screenSaverAnim();
+            setTimeout(function() {
+                that.screenSaverShow();
+            }, 5000);
+
+            // setup cam last cuz it errors out
+            this.setupCam();
 
             console.log("I am done being initted.");
         },
         
+        setupScreenSaver: function() {
+            $('#' + this.id + ' .btn-screensaver').click(this.screenSaverShow.bind(this));
+            $('#' + this.id + "-screensaver .close2").click(this.onScreenSaverClose.bind(this));    
+        
+        },
+        onScreenSaverClose: function() {
+            console.log("got close on screensaver");
+            $('#com-zipwhip-widget-texterator-screensaver').addClass("hidden");
+            this.cancelAnim = true;
+        },
+        screenSaverShow: function() {
+            $('#com-zipwhip-widget-texterator-screensaver').removeClass("hidden");
+            
+            // cleanup and hide the resizer icon on the console widget
+            $('.ui-icon-gripsmall-diagonal-se').addClass("hidden");
+        },
+        cancelAnim: false,
         screenSaverAnim: function() {
+            
+            this.cancelAnim = false;
             var that = this;
             $('#com-zipwhip-widget-texterator-screensaver .cta-beer').addClass("large");
+            // if (that.cancelAnim) return;
             setTimeout(function() {
                 $('#com-zipwhip-widget-texterator-screensaver .cta-beer').removeClass("large");
+                if (that.cancelAnim) return;
                 setTimeout(function() {
                     $('#com-zipwhip-widget-texterator-screensaver .cta-phone').addClass("large");
+                    if (that.cancelAnim) return;
                     setTimeout(function() {
                         $('#com-zipwhip-widget-texterator-screensaver .cta-phone').removeClass("large");
+                        if (that.cancelAnim) return;
                         setTimeout(function() {
+                            if (that.cancelAnim) return;
                             that.screenSaverAnim();
                         }, 4000);
                     }, 3000);
@@ -2503,10 +2584,11 @@ M5 (laser off)
         <div class="panel-heading ">
 
             <div class="btn-toolbar pull-right" role="toolbar">
-                <!--<div class="btn-group">-->
-                <!--    <button type="button" class="btn btn-xs btn-default btn-sayhello" data-delay="1000" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Say Hello" data-content="Generate a hello message">Say Hello-->
-                <!--    </button>-->
-                <!--</div>-->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-xs btn-default btn-screensaver" data-delay="1000" 
+                    data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" 
+                    data-title="Screensaver" data-content="Show full screen view">Screensaver</button>
+                </div>
                 <div class="btn-group">
                     <button type="button" class="btn btn-xs btn-default hidebody"><span class="glyphicon glyphicon-chevron-up"></span>
                     </button>
@@ -2627,13 +2709,17 @@ M5 (laser off)
     <div id="com-zipwhip-widget-texterator-screensaver" class="hidden" style="">
         <img class="screensaver-img" src="https://github.com/chilipeppr/workspace-texterator/raw/master/logo.png">
         <div class="centering-container">
-            <p class="calltoaction">
+            <p class="calltoaction hidden">
                 Text 
-                <span class="cta-beer cta-hilite">Beer</span> 
+                <span class="cta-beer cta-hilite anim1">Beer</span> 
                 to 
-                <span class="cta-phone cta-hilite">(844) 947-5000</span>
+                <span class="cta-phone cta-hilite anim2">(844) 947-5000</span>
+            </p>
+            <p class="calltoaction xhidden zipIn">
+                (734) 718-0067 your beer is ready!
             </p>
         </div>
+        <button type="button" class="close2" aria-label="Close"><span>&times;</span></button>
         
     </div>
     <div class="givemeacup well hidden" style="position:absolute;top:0px;xwidth:100%;margin:20px;font-size:40px;background-color:red;">
