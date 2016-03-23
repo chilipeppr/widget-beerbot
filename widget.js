@@ -298,7 +298,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             setTimeout(function() {
                 var ssEl = $('#com-zipwhip-widget-texterator-screensaver').detach().appendTo("body");
                 // $("body").append(ssEl);
-            }, 8000);
+            }, 5000);
         },
         onScreenSaverClose: function() {
             console.log("got close on screensaver");
