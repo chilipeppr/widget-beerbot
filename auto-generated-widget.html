@@ -52,8 +52,18 @@
     background-color: white;
     text-align: center;
     z-index: 2;
+    background: url("texterator-bg.svg");
+    background-size: cover;
 }
-
+#com-zipwhip-widget-texterator-screensaver .screensaver-logo {
+    position:absolute;
+    width:100%;
+    height:30%;
+    background: url("texterator-logo-screen2.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color:white;
+}
 #com-zipwhip-widget-texterator-screensaver .centering-container {
     height: 100%;
     position: relative;
@@ -67,9 +77,12 @@
     /*margin-top: -80px;*/
     /*border:1px solid red;*/
     font-size: 80px;
-    color: #666;
+    color: #333;
 }
-
+#com-zipwhip-widget-texterator-screensaver .pickup-phone {
+    font-weight:bold;
+    font-size:120px;
+}
 #com-zipwhip-widget-texterator-screensaver .cta-hilite {
     font-weight: bold;
     /*transition: color 2s, font-size 2s;*/
@@ -2708,17 +2721,19 @@ M5 (laser off)
         
         
     </div>
-    <div id="com-zipwhip-widget-texterator-screensaver" class="hidden" style="">
-        <img class="screensaver-img" src="https://github.com/chilipeppr/workspace-texterator/raw/master/logo.png">
+    <div id="com-zipwhip-widget-texterator-screensaver" class="xhidden" style="">
+        <!--<img class="screensaver-img" src="https://github.com/chilipeppr/workspace-texterator/raw/master/logo.png">-->
+        <div class="screensaver-logo"></div>
         <div class="centering-container">
-            <p class="calltoaction xhidden">
+            <p class="calltoaction hidden">
                 Text 
                 <span class="cta-beer cta-hilite anim1">Beer</span> 
                 to 
                 <span class="cta-phone cta-hilite anim2">(844) 947-5000</span>
             </p>
-            <p class="calltoaction hidden zipIn">
-                (734) 718-0067 your beer is ready!
+            <p class="calltoaction xhidden zipIn">
+                <span class="pickup-phone">(734) 718-0067</span><br>
+                <span class="pickup-text">Your beer is ready for pickup!</span>
             </p>
         </div>
         <button type="button" class="close2" aria-label="Close"><span>&times;</span></button>
