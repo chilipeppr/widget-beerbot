@@ -320,7 +320,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             
             var that = this;
-            navigator.getUserMedia({video: true, audio: true}, 
+            navigator.getUserMedia({video: true, audio: false}, 
                 function(localMediaStream) {
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
@@ -346,7 +346,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         camTakePicture: function() {
             console.log("localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getVideoTracks());
             // this.localMediaStream.getVideoTracks()[0].start();
-            this.localMediaStream.active = true;
+            // this.localMediaStream.active = true;
 
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
@@ -383,8 +383,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // clearphoto();
             // }
             // this.localMediaStream.getVideoTracks()[0].stop();
-            this.localMediaStream.active = false;
-            console.log("stopped localMediaStream:", this.localMediaStream);
+            this.localMediaStream.getTracks()[0].stop();
+            // this.localMediaStream.active = false;
+            console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
         },
         sendTestMMS: function() {
             //this.camTakePicture();
