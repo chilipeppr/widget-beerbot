@@ -335,8 +335,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             context.drawImage(this.videoEl, 0, 0, width, height);
             
             var ratio = width / logo.width();
-            var newLogoWidth = logo.width() * ratio;
-            var newLogoHeight = logo.height() * ratio;
+            var newLogoWidth = parseInt(logo.width() * ratio);
+            var newLogoHeight = parseInt(logo.height() * ratio);
             console.log("ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
             
             //canvas.height += logoEl.height();
