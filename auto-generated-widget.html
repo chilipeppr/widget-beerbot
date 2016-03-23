@@ -395,8 +395,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             }, 3000);
         },
         
-        videoEl: null,
-        localMediaStream: null,
+        // videoEl: null,
+        // localMediaStream: null,
+        //navigator: null,
         /**
          * Webcam snapshot methods
          */
@@ -414,8 +415,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 function(localMediaStream) {
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
-                    that.videoEl = videoEl;
-                    that.localMediaStream = localMediaStream;
+                    // that.videoEl = videoEl;
+                    // that.localMediaStream = localMediaStream;
 
                     // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
                     // See crbug.com/110938.
@@ -426,7 +427,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     
                     videoEl.addEventListener('canplay', function(ev){
                       console.log("video seems to be playing. got canplay.");
-                      
+                      this.localMediaStream.getTracks()[0].stop();
                     }, false);
                 }, this.camError);
         },
@@ -434,49 +435,55 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.error("video. Got err on initting cam. err:", err);
         },
         camTakePicture: function() {
-            console.log("localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getVideoTracks());
-            // this.localMediaStream.getVideoTracks()[0].start();
-            // this.localMediaStream.active = true;
-            this.localMediaStream.getTracks()[0].start();
+            navigator.getUserMedia(
+                {video: true, audio: false}, 
+                function(localMediaStream) {
+                    
+                    var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
+                    videoEl.src = window.URL.createObjectURL(localMediaStream);
+                    
+                    videoEl.addEventListener('canplay', function(ev){
+                        console.log("video seems to be playing. got canplay.");
+                        
+                        var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
+                        var context = canvas.getContext('2d');
+                        //console.log("videoEl:", this.videoEl, "context:", context);
+                        
+                        // overlay logo over the canvas
+                        var logo = document.getElementById('com-chilipeppr-texterator-uservideo-logo');
+                        var logoEl = $(logo);
+                        // console.log("logo:", logo, "logoEl", logoEl);
+                        
+                        var width = videoEl.videoWidth; 
+                        var height = videoEl.videoHeight; 
+                        console.log("video. width:", width, ", height:", height);
+                        
+                        var ratio = width / logoEl.width();
+                        var newLogoWidth = parseInt(logoEl.width() * ratio);
+                        var newLogoHeight = parseInt(logoEl.height() * ratio);
+                        console.log("ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
+                        
+                        canvas.width = width;
+                        canvas.height = height + newLogoHeight;
+                        console.log("canvas width:", canvas.width, "height:", canvas.height);
+                        context.drawImage(this.videoEl, 0, 0, width, height);
+                        
+                        // draw at bottom of image
+                        context.drawImage(logo, 0, height, newLogoWidth, newLogoHeight);
+                        
+                        var data = canvas.toDataURL('image/png');
+                        var photo = document.getElementById('com-chilipeppr-texterator-uservideo-photo');
+                        photo.setAttribute('src', data);
+                        console.log("video. done taking picture.");
 
-            var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
-            var context = canvas.getContext('2d');
-            console.log("videoEl:", this.videoEl, "context:", context);
-            
-            // overlay logo over the canvas
-            var logo = document.getElementById('com-chilipeppr-texterator-uservideo-logo');
-            var logoEl = $(logo);
-            console.log("logo:", logo, "logoEl", logoEl);
-            
-            var width = this.videoEl.videoWidth; //context.canvas.clientWidth;
-            var height = this.videoEl.videoHeight; //context.canvas.clientHeight;
-            console.log("video. width:", width, ", height:", height);
-            // if (width && height) {
-            
-            var ratio = width / logoEl.width();
-            var newLogoWidth = parseInt(logoEl.width() * ratio);
-            var newLogoHeight = parseInt(logoEl.height() * ratio);
-            console.log("ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
-            
-            //canvas.height += logoEl.height();
-            canvas.width = width;
-            canvas.height = height + newLogoHeight;
-            console.log("canvas width:", canvas.width, "height:", canvas.height);
-            context.drawImage(this.videoEl, 0, 0, width, height);
-            // draw at bottom of image
-            context.drawImage(logo, 0, height, newLogoWidth, newLogoHeight);
-            
-            var data = canvas.toDataURL('image/png');
-            var photo = document.getElementById('com-chilipeppr-texterator-uservideo-photo');
-            photo.setAttribute('src', data);
-            console.log("video. done taking picture.");
-            // } else {
-            // clearphoto();
-            // }
-            // this.localMediaStream.getVideoTracks()[0].stop();
-            this.localMediaStream.getTracks()[0].stop();
-            // this.localMediaStream.active = false;
-            console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
+                        localMediaStream.getTracks()[0].stop();
+                        console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
+
+                    }, false);
+                }, 
+                this.camError
+            );
+
         },
         sendTestMMS: function() {
             //this.camTakePicture();
