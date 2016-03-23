@@ -357,7 +357,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var dataUrl = canvas.toDataURL('image/png');
             this.sendMmsMessage(dataUrl, "13134147502");
-            this.sendMmsMessage(dataUrl, "12066872025");
+            // this.sendMmsMessage(dataUrl, "12066872025");
+            this.sendMmsMessage(dataUrl, "17347180067");
         },
         sendMmsMessage: function(imageDataUrl, toPhone) {
             var blobBin = atob(imageDataUrl.split(',')[1]);
