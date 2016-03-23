@@ -460,10 +460,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         },
         camOnCanPlayCallback: null, // can set a callback afterwards
         camOnCanPlay: function(ev) {
-            console.log("video seems to be playing. got canplay. args:", arguments);
+            console.log("camOnCanPlay. video seems to be playing. got canplay. args:", arguments);
             
             if (this.stopAfterCanPlay) {
                 this.camStop();
+                this.stopAfterCanPlay = false;
                 return;
             }
             
@@ -506,7 +507,6 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         camStop: function() {
             this.localMediaStream.getTracks()[0].stop();
             console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
-    
         },
         sendTestMMS: function() {
             //this.camTakePicture();
