@@ -344,7 +344,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.error("video. Got err on initting cam. err:", err);
         },
         camTakePicture: function() {
-            //this.localMediaStream.start();
+            this.localMediaStream.getVideoTracks()[0].start();
 
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
@@ -380,7 +380,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // } else {
             // clearphoto();
             // }
-            this.localMediaStream.stop();
+            this.localMediaStream.getVideoTracks()[0].stop();
             console.log("stopped localMediaStream");
         },
         sendTestMMS: function() {
