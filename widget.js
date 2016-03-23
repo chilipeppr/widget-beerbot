@@ -285,7 +285,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             }, 5000);
 
             // setup cam last cuz it errors out
-            this.setupCam();
+            // this.setupCam();
 
             console.log("I am done being initted.");
         },
