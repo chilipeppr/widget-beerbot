@@ -127,6 +127,27 @@
     font-size:120px;
 }
 
+/* Cam Photo */
+#com-zipwhip-widget-texterator-screensaver .camphoto {
+    height: 100%;
+    position: relative;
+    text-align: center;
+    /*border:1px solid red;*/
+}
+#com-zipwhip-widget-texterator-screensaver .camphoto-img {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    /*right: 50%;*/
+    height:50%;
+    transform: rotate(7deg);
+    /*transform: rotate3d(0.6, -0.1, 0, 60deg);*/
+    /*background-repeat: no-repeat;*/
+}
+#com-zipwhip-widget-texterator-screensaver .camphoto-img.zipIn {
+    animation: fadeAndScaleAndRotate 3s;
+}
+
 .screensaver-img {
     position: absolute;
     top:10%;
@@ -170,6 +191,16 @@
     to {
         opacity: 1;
         transform: scale(1, 1);
+    }
+}
+@keyframes fadeAndScaleAndRotate {
+    from {
+        opacity: 0;
+        transform: rotate(2deg) scale(.5, .5);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(7deg) scale(1, 1);
     }
 }
     </style>
@@ -2744,7 +2775,7 @@ M5 (laser off)
         
         
     </div>
-    <div id="com-zipwhip-widget-texterator-screensaver" class="hidden" style="">
+    <div id="com-zipwhip-widget-texterator-screensaver" class="xhidden" style="">
         <!--<img class="screensaver-img" src="https://github.com/chilipeppr/workspace-texterator/raw/master/logo.png">-->
         <div class="screensaver-container">
             <div class="screensaver-logo"></div>
@@ -2764,10 +2795,13 @@ M5 (laser off)
             <!--    to -->
             <!--    <span class="cta-phone cta-hilite anim2">(844) 947-5000</span>-->
             <!--</p>-->
-            <p class="pickup-headline xhidden zipIn">
+            <p class="pickup-headline hidden zipIn">
                 <span class="pickup-phone">(734) 718-0067</span><br>
                 <span class="pickup-text">Your beer is ready for pickup!</span>
             </p>
+            <div class="camphoto">
+                <img class="camphoto-img zipIn" src="samplecam.png"></img>
+            </div>
         </div>
         <button type="button" class="close2" aria-label="Close"><span>&times;</span></button>
         <div class="givemeacup well hidden" style="position:absolute;top:0px;xwidth:100%;margin:20px;font-size:40px;background-color:red;">

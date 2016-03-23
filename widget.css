@@ -111,6 +111,27 @@
     font-size:120px;
 }
 
+/* Cam Photo */
+#com-zipwhip-widget-texterator-screensaver .camphoto {
+    height: 100%;
+    position: relative;
+    text-align: center;
+    /*border:1px solid red;*/
+}
+#com-zipwhip-widget-texterator-screensaver .camphoto-img {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    /*right: 50%;*/
+    height:50%;
+    transform: rotate(7deg);
+    /*transform: rotate3d(0.6, -0.1, 0, 60deg);*/
+    /*background-repeat: no-repeat;*/
+}
+#com-zipwhip-widget-texterator-screensaver .camphoto-img.zipIn {
+    animation: fadeAndScaleAndRotate 3s;
+}
+
 .screensaver-img {
     position: absolute;
     top:10%;
@@ -154,5 +175,15 @@
     to {
         opacity: 1;
         transform: scale(1, 1);
+    }
+}
+@keyframes fadeAndScaleAndRotate {
+    from {
+        opacity: 0;
+        transform: rotate(2deg) scale(.5, .5);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(7deg) scale(1, 1);
     }
 }
