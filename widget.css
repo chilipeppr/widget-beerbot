@@ -36,37 +36,30 @@
     background-color: white;
     text-align: center;
     z-index: 2;
-    background: url("https://i2dcui.appspot.com/img/texterator/texterator-bg.svg");
+    background: url("https://preview.c9users.io/chilipeppr/widget-texterator/texterator-bg.svg");
     background-size: cover;
 }
-#com-zipwhip-widget-texterator-screensaver .screensaver-logo {
+#com-zipwhip-widget-texterator-screensaver .screensaver-container {
     position:absolute;
     width:100%;
     height:30%;
-    background: url("https://i2dcui.appspot.com/img/texterator/texterator-logo-screen3.svg");
+    background-color:white;
+}
+#com-zipwhip-widget-texterator-screensaver .screensaver-logo {
+    position:absolute;
+    left:5%;
+    height:100%;
+    width:100%;
+    background: url("https://preview.c9users.io/chilipeppr/widget-texterator/texterator-logo-screen3.svg");
     background-size: contain;
     background-repeat: no-repeat;
-    background-color:white;
 }
 #com-zipwhip-widget-texterator-screensaver .centering-container {
     height: 100%;
     position: relative;
     text-align: center;
 }
-#com-zipwhip-widget-texterator-screensaver .calltoaction {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    /*margin-top: -80px;*/
-    /*border:1px solid red;*/
-    font-size: 80px;
-    color: #333;
-}
-#com-zipwhip-widget-texterator-screensaver .pickup-phone {
-    font-weight:bold;
-    font-size:120px;
-}
+
 #com-zipwhip-widget-texterator-screensaver .cta-hilite {
     font-weight: bold;
     /*transition: color 2s, font-size 2s;*/
@@ -79,15 +72,42 @@
     /*font-size: 120px*/
     /*transform: scale(1.3);*/
 }
+#com-zipwhip-widget-texterator-screensaver .calltoaction {
+    position:absolute;
+    top:0%;
+    width:60%;
+    right:0px;
+    height:100%;
+    /*text-align:left;*/
+    font-size:80px;
+    /*line-height:300px;*/
+    transform: translateY(30%); 
+}
 #com-zipwhip-widget-texterator-screensaver .cta-hilite.anim1 {
     animation: zoomInOut1 15s infinite;
 }
 #com-zipwhip-widget-texterator-screensaver .cta-hilite.anim2 {
     animation: zoomInOut2 15s infinite;
 }
-#com-zipwhip-widget-texterator-screensaver .calltoaction.zipIn {
+
+#com-zipwhip-widget-texterator-screensaver .pickup-headline {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    /*margin-top: -80px;*/
+    /*border:1px solid red;*/
+    font-size: 80px;
+    color: #333;
+}
+#com-zipwhip-widget-texterator-screensaver .pickup-headline.zipIn {
     animation: fadeAndScale 1s;
 }
+#com-zipwhip-widget-texterator-screensaver .pickup-phone {
+    font-weight:bold;
+    font-size:120px;
+}
+
 .screensaver-img {
     position: absolute;
     top:10%;
@@ -109,19 +129,19 @@
     opacity: 0.8;
 }
 @keyframes zoomInOut1 {
-  0%   { font-size: 80px; color: #666; }
+  0%   { font-size: 80px; color: #333; }
   10%  { font-size: 120px; color: #000; }
   20%  { font-size: 120px; color: #000; }
-  30% { font-size: 80px; color: #666; }
-  100% { font-size: 80px; color: #666; }
+  30% { font-size: 80px; color: #333; }
+  100% { font-size: 80px; color: #333; }
 }
 @keyframes zoomInOut2 {
-  0%   { font-size: 80px; color: #666; }
-  30%   { font-size: 80px; color: #666; }
+  0%   { font-size: 80px; color: #333; }
+  30%   { font-size: 80px; color: #333; }
   40%  { font-size: 120px; color: #000; }
   50%  { font-size: 120px; color: #000; }
-  60% { font-size: 80px; color: #666; }
-  100% { font-size: 80px; color: #666; }
+  60% { font-size: 80px; color: #333; }
+  100% { font-size: 80px; color: #333; }
 }
 @keyframes fadeAndScale {
     from {
