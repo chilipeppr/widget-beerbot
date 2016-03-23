@@ -366,6 +366,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         },
         sendMmsMessage: function(imageDataUrl, toPhone) {
             var blobBin = atob(imageDataUrl.split(',')[1]);
+            console.log("binary byte size of image:", blobBin.length);
             var array = [];
             for(var i = 0; i < blobBin.length; i++) {
                 array.push(blobBin.charCodeAt(i));
