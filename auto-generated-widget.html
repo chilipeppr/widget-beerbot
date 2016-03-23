@@ -321,11 +321,7 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
     $('title').html(myWidget.name);
     // $('body').css("position", "relative");
     
-    // move screensaver to last position
-    setTimeout(function() {
-        var ssEl = $('#com-zipwhip-widget-texterator-screensaver').detach().appendTo("body");
-        // $("body").append(ssEl);
-    }, 8000);
+    
 
 } /*end_test*/ );
 
@@ -439,6 +435,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             $('#' + this.id + ' .btn-screensaver').click(this.screenSaverShow.bind(this));
             $('#' + this.id + "-screensaver .close2").click(this.onScreenSaverClose.bind(this));    
         
+            // move screensaver to last position in DOM
+            setTimeout(function() {
+                var ssEl = $('#com-zipwhip-widget-texterator-screensaver').detach().appendTo("body");
+                // $("body").append(ssEl);
+            }, 8000);
         },
         onScreenSaverClose: function() {
             console.log("got close on screensaver");
@@ -2706,7 +2707,7 @@ M5 (laser off)
         
         
     </div>
-    <div id="com-zipwhip-widget-texterator-screensaver" class="hidden" style="">
+    <div id="com-zipwhip-widget-texterator-screensaver" class="xhidden" style="">
         <img class="screensaver-img" src="https://github.com/chilipeppr/workspace-texterator/raw/master/logo.png">
         <div class="centering-container">
             <p class="calltoaction hidden">
@@ -2720,11 +2721,11 @@ M5 (laser off)
             </p>
         </div>
         <button type="button" class="close2" aria-label="Close"><span>&times;</span></button>
-        
+        <div class="givemeacup well hidden" style="position:absolute;top:0px;xwidth:100%;margin:20px;font-size:40px;background-color:red;">
+            Please place a cup in slot 0! Somebody wants a beer.
+        </div>
     </div>
-    <div class="givemeacup well hidden" style="position:absolute;top:0px;xwidth:100%;margin:20px;font-size:40px;background-color:red;">
-        Please place a cup in slot 0! Somebody wants a beer.
-    </div>
+    
 
 </body>
 

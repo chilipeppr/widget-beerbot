@@ -180,11 +180,7 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
     $('title').html(myWidget.name);
     // $('body').css("position", "relative");
     
-    // move screensaver to last position
-    setTimeout(function() {
-        var ssEl = $('#com-zipwhip-widget-texterator-screensaver').detach().appendTo("body");
-        // $("body").append(ssEl);
-    }, 8000);
+    
 
 } /*end_test*/ );
 
@@ -298,6 +294,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             $('#' + this.id + ' .btn-screensaver').click(this.screenSaverShow.bind(this));
             $('#' + this.id + "-screensaver .close2").click(this.onScreenSaverClose.bind(this));    
         
+            // move screensaver to last position in DOM
+            setTimeout(function() {
+                var ssEl = $('#com-zipwhip-widget-texterator-screensaver').detach().appendTo("body");
+                // $("body").append(ssEl);
+            }, 8000);
         },
         onScreenSaverClose: function() {
             console.log("got close on screensaver");
