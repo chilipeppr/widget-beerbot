@@ -81,7 +81,7 @@
     right:0px;
     height:100%;
     /*text-align:left;*/
-    font-size:80px;
+    font-size:100px;
     /*line-height:300px;*/
     transform: translateY(35%); 
 }
@@ -131,19 +131,19 @@
     opacity: 0.8;
 }
 @keyframes zoomInOut1 {
-  0%   { font-size: 80px; color: #333; }
-  10%  { font-size: 120px; color: #000; }
-  20%  { font-size: 120px; color: #000; }
-  30% { font-size: 80px; color: #333; }
-  100% { font-size: 80px; color: #333; }
+  0%   { font-size: 100px; color: #333; }
+  10%  { font-size: 160px; color: #000; }
+  20%  { font-size: 160px; color: #000; }
+  30% { font-size: 100px; color: #333; }
+  100% { font-size: 100px; color: #333; }
 }
 @keyframes zoomInOut2 {
-  0%   { font-size: 80px; color: #333; }
-  30%   { font-size: 80px; color: #333; }
-  40%  { font-size: 120px; color: #000; }
-  50%  { font-size: 120px; color: #000; }
-  60% { font-size: 80px; color: #333; }
-  100% { font-size: 80px; color: #333; }
+  0%   { font-size: 100px; color: #333; }
+  30%   { font-size: 100px; color: #333; }
+  40%  { font-size: 160px; color: #000; }
+  50%  { font-size: 160px; color: #000; }
+  60% { font-size: 100px; color: #333; }
+  100% { font-size: 100px; color: #333; }
 }
 @keyframes fadeAndScale {
     from {
