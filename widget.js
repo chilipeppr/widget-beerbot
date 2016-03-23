@@ -345,7 +345,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         },
         camTakePicture: function() {
             console.log("localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getVideoTracks());
-            this.localMediaStream.getVideoTracks()[0].start();
+            // this.localMediaStream.getVideoTracks()[0].start();
+            this.localMediaStream.active = true;
 
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
@@ -381,8 +382,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // } else {
             // clearphoto();
             // }
-            this.localMediaStream.getVideoTracks()[0].stop();
-            console.log("stopped localMediaStream");
+            // this.localMediaStream.getVideoTracks()[0].stop();
+            this.localMediaStream.active = false;
+            console.log("stopped localMediaStream:", this.localMediaStream);
         },
         sendTestMMS: function() {
             //this.camTakePicture();
