@@ -281,7 +281,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             this.setupScreenSaver();
             // this.screenSaverAnim();
             setTimeout(function() {
-                // that.screenSaverShow();
+                that.screenSaverShow();
             }, 5500);
 
             // setup cam last cuz it errors out
@@ -383,6 +383,31 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         camError: function(err) {
             console.error("video. Got err on initting cam. err:", err);
         },
+        // camAfterPhotoCallback: null,
+        camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms: function(phone) {
+            
+            var that = this;
+            
+            // pre photo snapped
+            this.camPrePhotoCallback = function() {
+                
+            }
+            
+            // post photo snapped
+            this.camPostPhotoCallback = function(dataUrl) {
+                
+                // set src of screensaver image
+                var photo = document.getElementById('com-zipwhip-widget-texterator-screensaver-photo');
+                photo.setAttribute('src', dataUrl);
+                
+                // send mms
+                this.sendMmsMessage(dataUrl, phone);
+                
+                that.camOnCanPlayCallback = null;
+            }
+            
+            this.camTakePicture();
+        },
         camTakePicture: function() {
             var that = this;
             navigator.getUserMedia(
@@ -399,7 +424,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             );
 
         },
-        camOnCanPlayCallback: null, // can set a callback afterwards
+        camPrePhotoCallback: null, // can set a callback when video is live, but 3 seconds until snap
+        camPostPhotoCallback: null, // can set a callback after photo snapped and cam turned off
         camOnCanPlay: function(ev) {
             console.log("camOnCanPlay. video seems to be playing. got canplay. args:", arguments);
             
@@ -409,6 +435,14 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 return;
             }
             
+            // now snap the photo 3 seconds later
+            setTimeout(this.camImmediatelySnapPhoto.bind(this), 3000);
+            
+            // see if they want a callback pre-photo
+            if (this.camPrePhotoCallback) this.camPrePhotoCallback();
+            
+        },
+        camImmediatelySnapPhoto: function() {
             var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
@@ -444,6 +478,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
 
             this.camStop();
             
+            // do callback if they wanted it
+            if (this.camPostPhotoCallback) this.camPostPhotoCallback(data);
         },
         camStop: function() {
             console.log("camStop. localMediaStream:", this.localMediaStream);
@@ -473,7 +509,32 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // Ted
             // this.sendMmsMessage(dataUrl, "12063510437");
         },
+        /**
+         * Pass in a phone number and it verifies it is in e164 format
+         */
+        e164verify: function(phone) {
+            console.log("e164verify. phone:", phone);
+            // cleanup phone number to remove all formatting if it has it
+            phone = phone.replace(/[+ -()]/g, "");
+            var newphone = "";
+            // check if first digit is 1
+            if (phone.match(/^1/)) {
+                // is good to go if 10 digits + 1
+                if (phone.length == 1) {
+                    // good to go
+                    newphone = phone;
+                } else {
+                    console.error("seem to have phone num with 1 at start but not 11 digits? phone:", phone);
+                }
+            } else if (phone.length == 10) {
+                // this phone is 10 digits
+                newphone = "1" + phone;
+            } else {
+                console.error("seem to not have 10 digit phone number? phone:", phone);
+            }
+        },
         sendMmsMessage: function(imageDataUrl, toPhone) {
+            toPhone = this.e164verify(toPhone);
             var blobBin = atob(imageDataUrl.split(',')[1]);
             console.log("binary byte size of image:", blobBin.length);
             var array = [];

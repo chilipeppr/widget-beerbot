@@ -127,6 +127,55 @@
     font-size:120px;
 }
 
+/* Cam Preview */
+#com-zipwhip-widget-texterator-screensaver .campreview {
+    top:40%;
+    height: 50%;
+    position: relative;
+    border:1px solid red;
+}
+#com-zipwhip-widget-texterator-screensaver .screensaver-video {
+    background-color:white;
+    position:absolute;
+    top:0%;
+    height:100%;
+    width:30%;
+    left:10%;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step {
+    position:absolute;
+    left:50%;
+    font-size:230px;
+    top:25%;
+    /*line-height: 500px;*/
+    /*height:100%;*/
+    text-align: left;
+    opacity:0;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step.snap-step0 {
+    font-size:110px;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step.snap-step0.countdownAnim {
+    animation: countdownFadeInFadeOut 1s;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step.snap-step1.countdownAnim {
+    animation: countdownFadeInFadeOut 1s;
+    animation-delay: 1s;
+    animation-iteration-count: 1;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step.snap-step2.countdownAnim {
+    animation: countdownFadeInFadeOut 1s;
+    animation-delay: 2s;
+    animation-iteration-count: 1;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step.snap-step3.countdownAnim {
+    animation: countdownFadeInFadeOut 1s;
+    animation-delay: 3s;
+    animation-iteration-count: 1;
+}
+
 /* Cam Photo */
 #com-zipwhip-widget-texterator-screensaver .camphoto {
     height: 100%;
@@ -202,6 +251,12 @@
         opacity: 1;
         transform: rotate(7deg) scale(1, 1);
     }
+}
+@keyframes countdownFadeInFadeOut {
+    0% { opacity: 0; transform: scale(.5, .5); }
+    80% { opacity: 1; transform: scale(1, 1); }
+    99% { opacity: 1; transform: scale(1, 1); }
+    100% { opacity: 0; transform: scale(1, 1); }
 }
     </style>
 
@@ -490,7 +545,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             this.setupScreenSaver();
             // this.screenSaverAnim();
             setTimeout(function() {
-                // that.screenSaverShow();
+                that.screenSaverShow();
             }, 5500);
 
             // setup cam last cuz it errors out
@@ -592,6 +647,31 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         camError: function(err) {
             console.error("video. Got err on initting cam. err:", err);
         },
+        // camAfterPhotoCallback: null,
+        camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms: function(phone) {
+            
+            var that = this;
+            
+            // pre photo snapped
+            this.camPrePhotoCallback = function() {
+                
+            }
+            
+            // post photo snapped
+            this.camPostPhotoCallback = function(dataUrl) {
+                
+                // set src of screensaver image
+                var photo = document.getElementById('com-zipwhip-widget-texterator-screensaver-photo');
+                photo.setAttribute('src', dataUrl);
+                
+                // send mms
+                this.sendMmsMessage(dataUrl, phone);
+                
+                that.camOnCanPlayCallback = null;
+            }
+            
+            this.camTakePicture();
+        },
         camTakePicture: function() {
             var that = this;
             navigator.getUserMedia(
@@ -608,7 +688,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             );
 
         },
-        camOnCanPlayCallback: null, // can set a callback afterwards
+        camPrePhotoCallback: null, // can set a callback when video is live, but 3 seconds until snap
+        camPostPhotoCallback: null, // can set a callback after photo snapped and cam turned off
         camOnCanPlay: function(ev) {
             console.log("camOnCanPlay. video seems to be playing. got canplay. args:", arguments);
             
@@ -618,6 +699,14 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 return;
             }
             
+            // now snap the photo 3 seconds later
+            setTimeout(this.camImmediatelySnapPhoto.bind(this), 3000);
+            
+            // see if they want a callback pre-photo
+            if (this.camPrePhotoCallback) this.camPrePhotoCallback();
+            
+        },
+        camImmediatelySnapPhoto: function() {
             var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     
             var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
@@ -653,6 +742,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
 
             this.camStop();
             
+            // do callback if they wanted it
+            if (this.camPostPhotoCallback) this.camPostPhotoCallback(data);
         },
         camStop: function() {
             console.log("camStop. localMediaStream:", this.localMediaStream);
@@ -682,7 +773,32 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // Ted
             // this.sendMmsMessage(dataUrl, "12063510437");
         },
+        /**
+         * Pass in a phone number and it verifies it is in e164 format
+         */
+        e164verify: function(phone) {
+            console.log("e164verify. phone:", phone);
+            // cleanup phone number to remove all formatting if it has it
+            phone = phone.replace(/[+ -()]/g, "");
+            var newphone = "";
+            // check if first digit is 1
+            if (phone.match(/^1/)) {
+                // is good to go if 10 digits + 1
+                if (phone.length == 1) {
+                    // good to go
+                    newphone = phone;
+                } else {
+                    console.error("seem to have phone num with 1 at start but not 11 digits? phone:", phone);
+                }
+            } else if (phone.length == 10) {
+                // this phone is 10 digits
+                newphone = "1" + phone;
+            } else {
+                console.error("seem to not have 10 digit phone number? phone:", phone);
+            }
+        },
         sendMmsMessage: function(imageDataUrl, toPhone) {
+            toPhone = this.e164verify(toPhone);
             var blobBin = atob(imageDataUrl.split(',')[1]);
             console.log("binary byte size of image:", blobBin.length);
             var array = [];
@@ -2775,7 +2891,7 @@ M5 (laser off)
         
         
     </div>
-    <div id="com-zipwhip-widget-texterator-screensaver" class="xhidden" style="">
+    <div id="com-zipwhip-widget-texterator-screensaver" class="hidden" style="">
         <!--<img class="screensaver-img" src="https://github.com/chilipeppr/workspace-texterator/raw/master/logo.png">-->
         <div class="screensaver-container">
             <div class="screensaver-logo"></div>
@@ -2799,8 +2915,15 @@ M5 (laser off)
                 <span class="pickup-phone">(734) 718-0067</span><br>
                 <span class="pickup-text">Your beer is ready for pickup!</span>
             </p>
-            <div class="camphoto">
-                <img class="camphoto-img zipIn" src="https://preview.c9users.io/chilipeppr/widget-texterator/samplecam.png"></img>
+            <div class="campreview">
+                <video id="com-chilipeppr-texterator-screensaver-video" class="screensaver-video" autoplay="false" controls="true"></video>
+                <div class="snap-step snap-step0 countdownAnim">Get ready for your<br>photo to be snapped!</div>
+                <div class="snap-step snap-step1 countdownAnim">3</div>
+                <div class="snap-step snap-step2 countdownAnim">2</div>
+                <div class="snap-step snap-step3 countdownAnim">1</div>
+            </div>
+            <div class="camphoto hidden">
+                <img id="com-zipwhip-widget-texterator-screensaver-photo" class="camphoto-img zipIn" src="https://preview.c9users.io/chilipeppr/widget-texterator/samplecam.png"></img>
             </div>
         </div>
         <button type="button" class="close2" aria-label="Close"><span>&times;</span></button>
