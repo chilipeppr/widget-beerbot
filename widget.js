@@ -435,8 +435,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 return;
             }
             
-            // now snap the photo 3 seconds later
-            setTimeout(this.camImmediatelySnapPhoto.bind(this), 3000);
+            // now snap the photo 6 seconds later to give time for anim on screensaver
+            setTimeout(this.camImmediatelySnapPhoto.bind(this), 6000);
             
             // see if they want a callback pre-photo
             if (this.camPrePhotoCallback) this.camPrePhotoCallback();

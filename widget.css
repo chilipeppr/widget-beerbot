@@ -116,7 +116,7 @@
     top:40%;
     height: 50%;
     position: relative;
-    border:1px solid red;
+    /*border:1px solid red;*/
 }
 #com-zipwhip-widget-texterator-screensaver .screensaver-video {
     background-color:white;
@@ -129,35 +129,41 @@
 #com-zipwhip-widget-texterator-screensaver .snap-step {
     position:absolute;
     left:50%;
-    font-size:230px;
-    top:25%;
+    font-size:280px;
+    top:15%;
     /*line-height: 500px;*/
     /*height:100%;*/
     text-align: left;
     opacity:0;
 }
 #com-zipwhip-widget-texterator-screensaver .snap-step.snap-step0 {
-    font-size:110px;
+    font-size:60px;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step-phone {
+    font-size:140px;
 }
 #com-zipwhip-widget-texterator-screensaver .snap-step.snap-step0.countdownAnim {
-    animation: countdownFadeInFadeOut 1s;
+    animation: countdownFadeInFadeOut 3s;
     animation-delay: 0s;
     animation-iteration-count: 1;
 }
 #com-zipwhip-widget-texterator-screensaver .snap-step.snap-step1.countdownAnim {
     animation: countdownFadeInFadeOut 1s;
-    animation-delay: 1s;
+    animation-delay: 3s;
     animation-iteration-count: 1;
 }
 #com-zipwhip-widget-texterator-screensaver .snap-step.snap-step2.countdownAnim {
     animation: countdownFadeInFadeOut 1s;
-    animation-delay: 2s;
+    animation-delay: 4s;
     animation-iteration-count: 1;
 }
 #com-zipwhip-widget-texterator-screensaver .snap-step.snap-step3.countdownAnim {
     animation: countdownFadeInFadeOut 1s;
-    animation-delay: 3s;
+    animation-delay: 5s;
     animation-iteration-count: 1;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step.xcountdownAnim {
+    opacity:1;
 }
 
 /* Cam Photo */
