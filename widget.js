@@ -286,6 +286,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
 
             // setup cam last cuz it errors out
             this.setupCam();
+            
+            // pretend a snap of a photo
+            setTimeout(function() {
+                that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
+            }, 10000);
 
             console.log("I am done being initted.");
         },
@@ -390,7 +395,14 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
             // pre photo snapped
             this.camPrePhotoCallback = function() {
+                // show the preview on screensaver
+                $('#com-zipwhip-widget-texterator-screensaver .campreview').removeClass("hidden");
                 
+                // hide other states of screensaver
+                $('#com-zipwhip-widget-texterator-screensaver .pickup-headline').addClass("hidden");
+                $('#com-zipwhip-widget-texterator-screensaver .camphoto').addClass("hidden");
+                
+                that.camPrePhotoCallback = null;
             }
             
             // post photo snapped
@@ -400,10 +412,17 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 var photo = document.getElementById('com-zipwhip-widget-texterator-screensaver-photo');
                 photo.setAttribute('src', dataUrl);
                 
-                // send mms
-                this.sendMmsMessage(dataUrl, phone);
+                // show the photo on screensaver
+                $('#com-zipwhip-widget-texterator-screensaver .camphoto').removeClass("hidden");
                 
-                that.camOnCanPlayCallback = null;
+                // hide other states of screensaver
+                $('#com-zipwhip-widget-texterator-screensaver .pickup-headline').addClass("hidden");
+                $('#com-zipwhip-widget-texterator-screensaver .campreview').addClass("hidden");
+                
+                // send mms
+                that.sendMmsMessage(dataUrl, phone);
+                
+                that.camPostPhotoCallback = null;
             }
             
             this.camTakePicture();

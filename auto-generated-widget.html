@@ -138,7 +138,7 @@
     background-color:white;
     position:absolute;
     top:0%;
-    height:100%;
+    /*height:100%;*/
     width:30%;
     left:10%;
 }
@@ -556,6 +556,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
 
             // setup cam last cuz it errors out
             this.setupCam();
+            
+            // pretend a snap of a photo
+            setTimeout(function() {
+                that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
+            }, 10000);
 
             console.log("I am done being initted.");
         },
@@ -660,7 +665,14 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
             // pre photo snapped
             this.camPrePhotoCallback = function() {
+                // show the preview on screensaver
+                $('#com-zipwhip-widget-texterator-screensaver .campreview').removeClass("hidden");
                 
+                // hide other states of screensaver
+                $('#com-zipwhip-widget-texterator-screensaver .pickup-headline').addClass("hidden");
+                $('#com-zipwhip-widget-texterator-screensaver .camphoto').addClass("hidden");
+                
+                that.camPrePhotoCallback = null;
             }
             
             // post photo snapped
@@ -670,10 +682,17 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 var photo = document.getElementById('com-zipwhip-widget-texterator-screensaver-photo');
                 photo.setAttribute('src', dataUrl);
                 
-                // send mms
-                this.sendMmsMessage(dataUrl, phone);
+                // show the photo on screensaver
+                $('#com-zipwhip-widget-texterator-screensaver .camphoto').removeClass("hidden");
                 
-                that.camOnCanPlayCallback = null;
+                // hide other states of screensaver
+                $('#com-zipwhip-widget-texterator-screensaver .pickup-headline').addClass("hidden");
+                $('#com-zipwhip-widget-texterator-screensaver .campreview').addClass("hidden");
+                
+                // send mms
+                that.sendMmsMessage(dataUrl, phone);
+                
+                that.camPostPhotoCallback = null;
             }
             
             this.camTakePicture();
@@ -2921,7 +2940,7 @@ M5 (laser off)
                 <span class="pickup-phone">(734) 718-0067</span><br>
                 <span class="pickup-text">Your beer is ready for pickup!</span>
             </p>
-            <div class="campreview">
+            <div class="campreview hidden">
                 <video id="com-chilipeppr-texterator-screensaver-video" class="screensaver-video" autoplay="false" controls="true"></video>
                 <div class="snap-step snap-step0 countdownAnim"><span class="snap-step-phone">(xxx) xxx-xxxx</span><br>Get ready for your<br>photo to be snapped!</div>
                 <div class="snap-step snap-step1 countdownAnim">3</div>
