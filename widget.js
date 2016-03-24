@@ -1147,7 +1147,7 @@ G1 Y45
                 var slotVal = this.lastSlots[i];
                 var status = this.statusItems.slots[slotVal];
                 var slotObj = this.slotState[i];
-                var row = $('<tr><td>' + status + '</td><td>' + slotObj.queueId + '</td><td>' + slotObj.phone + '</td></tr>');
+                var row = $('<tr><td>' + (i+1) + '</td><td>' + status + '</td><td>' + slotObj.queueId + '</td><td>' + slotObj.phone + '</td></tr>');
                 tableEl.append(row);
             }
         },
