@@ -1010,6 +1010,15 @@ G1 Y45
             }
             
         },
+        
+        statusItems: {
+            "main_state" : ["M_INIT", "RUN", "ALARM", "BUSY"],
+            "table_state" : ["INIT", "STOPPED", "INDEX", "UNLOCK", "UNLOCKED", "ADVANCE", "LOCK"],
+            "table_block" : [],
+            "slots" : ["NOCUP", "EMPTY", "BEER", "MARKED"],
+            "laser_state" : ["LASER_INIT", "LASER_IDLE", "WAITINGFORLASER", "CUPMARKED"],
+            "e_type" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"]
+        },
         /**
          * This method is called if the status is updated from incoming serial data so that we
          * can trigger stuff off of it like re-checking the queue.
@@ -1021,7 +1030,8 @@ G1 Y45
             // update ui
             var el = $('#' + this.id + ' .table-status');
             for (var key in sr) {
-                el.find('.' + key).text(sr[key]);
+                var val = parseInt(sr[key]);
+                el.find('.' + key).text(this.statusItems[key][val]);
             }
             
             // if ('stat' in sr) this.sr.stat = sr.stat;

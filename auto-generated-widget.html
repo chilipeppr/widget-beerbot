@@ -1280,6 +1280,15 @@ G1 Y45
             }
             
         },
+        
+        statusItems: {
+            "main_state" : ["M_INIT", "RUN", "ALARM", "BUSY"],
+            "table_state" : ["INIT", "STOPPED", "INDEX", "UNLOCK", "UNLOCKED", "ADVANCE", "LOCK"],
+            "table_block" : [],
+            "slots" : ["NOCUP", "EMPTY", "BEER", "MARKED"],
+            "laser_state" : ["LASER_INIT", "LASER_IDLE", "WAITINGFORLASER", "CUPMARKED"],
+            "e_type" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"]
+        },
         /**
          * This method is called if the status is updated from incoming serial data so that we
          * can trigger stuff off of it like re-checking the queue.
@@ -1291,7 +1300,8 @@ G1 Y45
             // update ui
             var el = $('#' + this.id + ' .table-status');
             for (var key in sr) {
-                el.find('.' + key).text(sr[key]);
+                var val = parseInt(sr[key]);
+                el.find('.' + key).text(this.statusItems[key][val]);
             }
             
             // if ('stat' in sr) this.sr.stat = sr.stat;
@@ -2940,14 +2950,15 @@ M5 (laser off)
                 <!-- Tab Status. -->
                 <div class="tab-pane active" id="com-zipwhip-widget-texterator-tabStatus">
                     <table class="table table-condensed table-status">
-                        <tr><th>Slots</th><th>Main</th><th>Table</th><th>Table Block</th><th>Index</th><th>Laser</th></tr>
+                        <tr><th>Slots</th><th>Main</th><th>Table</th><th>Table Block</th><th>Index</th><th>Laser</th><th>e_type</th></tr>
                         <tr>
                             <td class="slots">0,0,0,0,0,0,0,0</td>
-                            <td class="main_state">1</td>
-                            <td class="table_state">1</td>
-                            <td class="table_block">1</td>
-                            <td class="index">1</td>
-                            <td class="laser_state">1</td>
+                            <td class="main_state">-</td>
+                            <td class="table_state">-</td>
+                            <td class="table_block">-</td>
+                            <td class="index">-</td>
+                            <td class="laser_state">-</td>
+                            <td class="e_type">-</td>
                         </tr>
                     </table>
                 </div>
