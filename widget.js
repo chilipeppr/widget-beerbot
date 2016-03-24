@@ -1198,6 +1198,8 @@ G1 Y45
          */
         onCupPickedUp: function(obj) {
             
+            console.log("onCupPickedUp. obj:", obj);
+            
             // we can call this as much as we want cuz it debounces. additional calls to it
             // during the long 10 sec process will just exit
             this.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms(obj.phone);
@@ -1526,6 +1528,9 @@ G1 Y45
             
             var that = this;
 
+            // quickly get the queueId in there to be safe
+            that.slotState[0] = {queueId: queueId, phone:"will update later"};
+            
             // record which id the beer vending is for so when
             // we see a done on the vendBeer we know who it was for
             // we could have the arduino/nodemcu tell us this id, but that seems like
