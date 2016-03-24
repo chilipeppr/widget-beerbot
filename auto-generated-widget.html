@@ -1300,8 +1300,24 @@ G1 Y45
             // update ui
             var el = $('#' + this.id + ' .table-status');
             for (var key in sr) {
-                var val = parseInt(sr[key]);
-                el.find('.' + key).text(this.statusItems[key][val]);
+                if (key == "index") {
+                    el.find("index").text(sr[key]);
+                }
+                else if (key == "slots") {
+                    // parse slots
+                    // var slotArr = sr.slots.split(/,/);
+                    var slotTxtArr = [];
+                    for (var i = 0; i < sr.slots.length; i++) {
+                        // var slotVal = parseInt(slotArr[i]);
+                        var slotVal = sr.slots[i];
+                        slotTxtArr.push(this.statusItems.slots[slotVal]);
+                    }
+                    el.find("slots").text(slotTxtArr.join(","));
+                }
+                else {
+                    var val = parseInt(sr[key]);
+                    el.find('.' + key).text(this.statusItems[key][val]);
+                }
             }
             
             // if ('stat' in sr) this.sr.stat = sr.stat;
