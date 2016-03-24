@@ -765,8 +765,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
             var videoEl = document.querySelector('#com-zipwhip-texterator-screensaver-video');
                     
-            // var canvas = document.getElementById('com-zipwhip-texterator-uservideo-canvas');
-            var canvas = document.getElementById('com-zipwhip-texterator-screensaver-canvas');
+            var canvas = document.getElementById('com-zipwhip-texterator-uservideo-canvas');
+            // var canvas = document.getElementById('com-zipwhip-texterator-screensaver-canvas');
             var context = canvas.getContext('2d');
             //console.log("videoEl:", videoEl, "context:", context);
             
@@ -779,9 +779,12 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             var height = videoEl.videoHeight; 
             console.log("video. width:", width, ", height:", height);
             
-            var ratio = width / logoEl.width();
-            var newLogoWidth = parseInt(logoEl.width() * ratio);
-            var newLogoHeight = parseInt(logoEl.height() * ratio);
+            var logoWidth = 698; //logoEl.width();
+            var logoHeight = 274;
+            console.log("video. logoWidth:", logoWidth, "logoEl:", logoEl);
+            var ratio = width / logoWidth;
+            var newLogoWidth = parseInt(logoWidth * ratio); // parseInt(logoEl.width() * ratio);
+            var newLogoHeight = parseInt(logoHeight * ratio); // parseInt(logoEl.height() * ratio);
             console.log("video. ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
             
             canvas.width = width;
