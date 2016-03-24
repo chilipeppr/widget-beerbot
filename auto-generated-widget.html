@@ -1394,18 +1394,25 @@ G1 Y45
             {queueId: 0, phone: ""},
             {queueId: 0, phone: ""}
         ],
+        advanceForwardSlots: function() {
+            // move all the array items forward 1. if array is at end then put that at 0.
+            this.slotState.unshift(this.slotState.pop());
+            this.refreshSlotStatus();
+        },
         onSlotStatusChange: function(newslots) {
           
             console.log("slotstatus. looks like slot status changed. lastSlots", this.lastSlots, "newslots:", newslots);
           
+            // we need to look at the changes and see if a cup was just picked up
+            
+            
             this.lastSlots = newslots; 
             
             // we just saw the table move forward, so update the slot numbers
             // for all users in queue table that are in a cup pickup state
             //   this.updateQueueToAdvanceSlotsForActiveItems();
             this.refreshSlotStatus();
-            
-             
+
         },
         refreshSlotStatus: function() {
             
