@@ -1372,6 +1372,12 @@ G1 Y45
         onTableIndexChange: function(newindex) {
           
             console.log("tableindex. looks like table index changed. lastTableIndex", this.lastTableIndex, "newindex:", newindex);
+            
+            // this is THE KEY EVENT for indicating that slots should move forward so we have a synced
+            // view of who/what queueId and user has what cup in what slot
+            // this is so we know when they pick up a cup that it's their's that was picked up
+            this.advanceForwardSlots();
+            
             // we just saw the table move forward, so update the slot numbers
             // for all users in queue table that are in a cup pickup state
             this.updateQueueToAdvanceSlotsForActiveItems();
@@ -1395,6 +1401,7 @@ G1 Y45
             {queueId: 0, phone: ""}
         ],
         advanceForwardSlots: function() {
+            console.log("slotstatus. advanceForwardSlots");
             // move all the array items forward 1. if array is at end then put that at 0.
             this.slotState.unshift(this.slotState.pop());
             this.refreshSlotStatus();
@@ -1415,6 +1422,8 @@ G1 Y45
 
         },
         refreshSlotStatus: function() {
+            
+            console.log("slotstatus. refreshing");
             
             var tableEl = $('#' + this.id + ' .table-slotstatus');
             var hdr = $('<tr><th>Slot</th><th>Status</th><th>QueueId</th><th>Phone</th></tr>');
