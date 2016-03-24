@@ -1182,9 +1182,11 @@ G1 Y45
          */
         comPort: "com3",
         
+        serialCtr: 0,
         sendSerial: function(cmd) {
             if (!cmd.match(/\n$/)) cmd += "\n";
             chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", "send " + this.comPort + " " + cmd);    
+        
         },
         setupSerialPubSub: function() {
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/ws/recv", this, this.onRecvSerial);    
