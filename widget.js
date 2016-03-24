@@ -1105,6 +1105,8 @@ G1 Y45
             // hack. stop iterating if we get more than 8 cupGone's in a row
             var cupGoneCnt = 0;
             
+            var that = this;
+            
             cursorRequest.onsuccess = function(e) {
 
                 var cursor = e.target.result;
@@ -1124,12 +1126,21 @@ G1 Y45
                         cupGoneCnt++
                         if (cupGoneCnt > 8) {
                             console.log("tableindex. hit cupGoneCnt limit. exiting analysis of slot move fwd.");
+                            that.updateQueueToAdvanceSlotsForActiveItemsCallback();
                             return;
                         }
                     }
                     cursor.continue();
                 }
+                else {
+                    console.log("tableindex. done with cursor. no more records.");
+                    that.updateQueueToAdvanceSlotsForActiveItemsCallback();
+                }
             };
+        },
+        updateQueueToAdvanceSlotsForActiveItemsCallback: function() {
+            // after done updating the queue, refresh it
+            this.refreshQueueView();
         },
         
         /**
