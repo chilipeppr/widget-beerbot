@@ -1430,7 +1430,7 @@ G1 Y45
                 });
                 
                 // send laserdone to Arduino
-                that.sendSerial("laserdone");
+                that.sendSerial("laserdone\n");
                 
             });
         },
