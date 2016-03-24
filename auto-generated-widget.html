@@ -1337,6 +1337,11 @@ G1 Y45
                 }
             }
             
+            // check if laser idle and if so wipe the etype event
+            if ('laser_state' in sr && sr.laser_state == 1) {
+                el.find('.etype').text("-");
+            }
+            
             // check if done vending beer
             if ('etype' in sr && sr.etype == 1) {
                 this.onDoneVendBeer();
