@@ -61,9 +61,11 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab-queue" role="tab" data-toggle="tab">Queue</a></li>
                 <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab0" role="tab" data-toggle="tab">Users</a></li>
+                <li class="active"><a href="#com-zipwhip-widget-texterator-tabStatus" role="tab" 
+                data-toggle="tab">Status</a></li>
                 <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab1" role="tab" data-toggle="tab">Lazy Susan</a></li>
                 <li><a href="#com-zipwhip-widget-texterator-tab2" role="tab" data-toggle="tab">Tap</a></li>
-                <li class="active"><a href="#com-zipwhip-widget-texterator-tab3" role="tab" data-toggle="tab">Cam</a></li>
+                <li class="xactive"><a href="#com-zipwhip-widget-texterator-tab3" role="tab" data-toggle="tab">Cam</a></li>
                 <li><a href="#com-zipwhip-widget-texterator-tab4" role="tab" data-toggle="tab">Laser</a></li>
             </ul>
             <!-- Tab panes -->
@@ -97,6 +99,15 @@
                         <tr><td>313-414-7502x</td><td>1</td><td>3/13/16 11:07AM</td></tr>
                     </table>
                 </div>
+                
+                <!-- Tab Status. -->
+                <div class="tab-pane active" id="com-zipwhip-widget-texterator-tabStatus">
+                    <table class="table table-condensed table-status">
+                        <tr><th>Slots</th><th>Main</th><th>Table</th><th>Table Block</th><th>Index</th><th>Laser</th></tr>
+                        <tr><td>0,0,0,0,0,0,0,0</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                    </table>
+                </div>
+
 
                 <!-- Tab 1. Lazy susan. -->
                 <div class="tab-pane xactive" id="com-zipwhip-widget-texterator-tab1">
@@ -121,7 +132,7 @@
                 </div>
 
                 <!-- Tab 3. Cam -->
-                <div class="active tab-pane" id="com-zipwhip-widget-texterator-tab3">
+                <div class="xactive tab-pane" id="com-zipwhip-widget-texterator-tab3">
                     
                     <video id="com-zipwhip-texterator-uservideo" class="uservideo" style="width:300px;" autoplay="false" controls="true"></video>
                     

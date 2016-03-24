@@ -960,6 +960,7 @@ G1 Y45
                 this.onSerialIncomingLine(line);
             }
         },
+        lastIncomingLine: null,
         /**
          * This method is called for each line that comes in on the serial port.
          */
@@ -967,17 +968,28 @@ G1 Y45
             
             // console.log("onSerialIncomingLine. line:", line);
             
-            // COMMANDS we will see from Arduino
-            // waitingforlaser
-            if (line.match(/waitingforlaser/)) {
-                // cool, the beerpour is done
-                this.onDoneVendBeer();
-            }
+            // dedupe since commands flow in like mad
+            if (this.lastIncomingLine == line) return;
             
-            /*
+            this.lastIncomingLine = line;
+            
+            // COMMANDS we will see from Arduino
+            // {"sr":{"slots":[0,0,0,0,0,0,0,0],"main_state":1,"table_state":1,"table_block":0,"index":58},"laser_state":1}}
+            
+            // waitingforlaser
+            // if (line.match(/waitingforlaser/)) {
+            //     // cool, the beerpour is done
+            //     this.onDoneVendBeer();
+            // }
+            
+            
             // when we see certain commands come in, we know stuff is done
             // we should only get json in
             if (line.match(/^{/)) {
+                
+                // cleanup errors
+                line = line.replace(/},"las/, ',"las');
+                
                 // we have json
                 var json = JSON.parse(line);
                 console.log("got json from texterator. json:", json);
@@ -986,10 +998,8 @@ G1 Y45
                 if ('sr' in json) {
                     // status report
                     var sr = json.sr;
-                    if ('stat' in sr) this.sr.stat = sr.stat;
-                    if ('beer' in sr) this.sr.beer = sr.beer;
-                    if ('slots' in sr) this.sr.slots = sr.slots;
-                    this.statusUpdated();
+                    
+                    this.statusUpdated(sr);
                 }
                 else if ('done' in json) {
                     // a done command came in
@@ -998,14 +1008,25 @@ G1 Y45
                     }
                 }
             }
-            */
+            
         },
         /**
          * This method is called if the status is updated from incoming serial data so that we
          * can trigger stuff off of it like re-checking the queue.
          */
-        statusUpdated: function() {
+        statusUpdated: function(sr) {
             
+            console.log("status changed. sr:", sr);
+            
+            // update ui
+            var el = $('#' + this.id + ' .table-status');
+            for (var key in sr) {
+                el.find('.' + key).text(sr[key]);
+            }
+            
+            // if ('stat' in sr) this.sr.stat = sr.stat;
+            // if ('beer' in sr) this.sr.beer = sr.beer;
+            // if ('slots' in sr) this.sr.slots = sr.slots;
         },
         
         /**
