@@ -1115,7 +1115,7 @@ G1 Y45
          * Initial default states for slots
          */
         slotState: [
-            {queueId: 0, phone: ""},
+            {queueId: 1, phone: ""},
             {queueId: 0, phone: ""},
             {queueId: 0, phone: ""},
             {queueId: 0, phone: ""},
