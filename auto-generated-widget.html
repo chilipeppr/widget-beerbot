@@ -1405,7 +1405,7 @@ G1 Y45
          * Initial default states for slots
          */
         slotState: [
-            {queueId: 1, phone: ""},
+            {queueId: 0, phone: ""},
             {queueId: 0, phone: ""},
             {queueId: 0, phone: ""},
             {queueId: 0, phone: ""},
@@ -1430,7 +1430,7 @@ G1 Y45
                 // and now the new status is nocup (0)
                 // then we have a cup pickup event!!!!!!
                 if (this.lastSlots[i] >= 2 && newslots[i] == 0) {
-                    this.onCupPickedUp(this.slotState[i]);
+                    this.onCupPickedUp(this.slotState[i], i);
                 }
             }
             
@@ -1466,21 +1466,34 @@ G1 Y45
          * to snap a photo can only really happen for the first person and the rest will just
          * have to get ignored.
          */
-        onCupPickedUp: function(obj) {
+        onCupPickedUp: function(obj, slotIndex) {
             
             console.log("onCupPickedUp. obj:", obj);
             
+            // debounce bad data at start
+            if (obj.queueId == 0) {
+                console.log("onCupPickedUp. dropping queueId 0");
+                return;
+            }
+            
+            // update state to see debug that cup got picked up
+            if ('phone' in this.slotState[slotIndex]) {
+                this.slotState[slotIndex].phone += " (Cup gone)";
+                this.refreshSlotStatus();
+            }
+            
             // we can call this as much as we want cuz it debounces. additional calls to it
             // during the long 10 sec process will just exit
-            this.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms(obj.phone);
+            if (obj.phone && obj.phone.length > 0)
+                this.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms(obj.phone);
             
             var that = this;
             
             // now update the database to change that the status is now Cup gone.
             this.getQueue(obj.queueId, function(qrec) {
                 qrec.status = "Cup gone";
-                this.updateQueue(qrec, function() {
-                    console.log("updateQueue finished. can now refresh view.")
+                that.updateQueue(qrec, function() {
+                    console.log("onCupPickedUp. updateQueue finished. can now refresh view.")
                     that.refreshQueueView();
                 });
             })
