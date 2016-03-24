@@ -1478,6 +1478,12 @@ G1 Y45
                 return;
             }
             
+            // debounce if we are already Cup gone
+            if (obj.phone.match(/Cup gone/i)) {
+                console.error("cup gone already hit for this slot/user. returning.");
+                return;
+            }
+            
             // we can call this as much as we want cuz it debounces. additional calls to it
             // during the long 10 sec process will just exit
             if (obj.phone && obj.phone.length > 0)
