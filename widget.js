@@ -450,7 +450,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 that.camPostPhotoCallback = null;
             }
             
-            this.camTakePicture();
+            setTimeout(function() {
+                that.camTakePicture();
+            }, 1000);
+            
         },
         camTakePicture: function() {
             var that = this;
