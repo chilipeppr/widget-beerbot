@@ -509,11 +509,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             var ratio = width / logoEl.width();
             var newLogoWidth = parseInt(logoEl.width() * ratio);
             var newLogoHeight = parseInt(logoEl.height() * ratio);
-            console.log("ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
+            console.log("video. ratio:", ratio, "newLogoWidth", newLogoWidth, "newLogoHeight", newLogoHeight);
             
             canvas.width = width;
             canvas.height = height + newLogoHeight;
-            console.log("canvas width:", canvas.width, "height:", canvas.height);
+            console.log("video. canvas width:", canvas.width, "height:", canvas.height);
             context.drawImage(videoEl, 0, 0, width, height);
             
             // draw at bottom of image
