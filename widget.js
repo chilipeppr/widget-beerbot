@@ -492,7 +492,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
             var videoEl = document.querySelector('#com-zipwhip-texterator-screensaver-video');
                     
-            var canvas = document.getElementById('com-zipwhip-texterator-uservideo-canvas');
+            // var canvas = document.getElementById('com-zipwhip-texterator-uservideo-canvas');
+            var canvas = document.getElementById('com-zipwhip-texterator-screensaver-canvas');
             var context = canvas.getContext('2d');
             //console.log("videoEl:", videoEl, "context:", context);
             
