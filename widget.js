@@ -1067,6 +1067,11 @@ G1 Y45
                 }
             }
             
+            // check if done vending beer
+            if ('etype' in sr && sr.etype == 1) {
+                this.onDoneVendBeer();
+            }
+            
             // if ('stat' in sr) this.sr.stat = sr.stat;
             // if ('beer' in sr) this.sr.beer = sr.beer;
             // if ('slots' in sr) this.sr.slots = sr.slots;
