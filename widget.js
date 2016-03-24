@@ -1696,7 +1696,7 @@ G1 Y45
                 // we get it too early, so delay by about 3 seconds to be safe
                 setTimeout(function() {
                     that.sendSerial("laserdone\n");
-                }, 2000);
+                }, 4000);
                 
                 
             });
