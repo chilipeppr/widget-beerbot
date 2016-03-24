@@ -1015,7 +1015,7 @@ G1 Y45
             "main_state" : ["M_INIT", "RUN", "ALARM", "BUSY"],
             "table_state" : ["INIT", "STOPPED", "INDEX", "UNLOCK", "UNLOCKED", "ADVANCE", "LOCK"],
             "table_block" : ["NOTBLOCKED"],
-            "slots" : ["NOCUP", "EMPTY", "BEER", "MARKED"],
+            "slots" : ["-", "EMPTY", "BEER", "MARKED"],
             "laser_state" : ["LASER_INIT", "LASER_IDLE", "WAITINGFORLASER", "CUPMARKED"],
             "e_type" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"]
         },
