@@ -435,6 +435,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     that.localMediaStream = localMediaStream;
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
+                    var videoEl2 = document.getElementById('com-zipwhip-widget-texterator-screensaver-video');
+                    videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     
                     // now the camOnCanPlay will get called automatically
                     console.log("got user media and local stream. camOnCanPlay should get called automatically next.");
@@ -551,6 +553,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             } else {
                 console.error("seem to not have 10 digit phone number? phone:", phone);
             }
+            console.log("e164verify. returning:", newphone);
+            return newphone;
         },
         sendMmsMessage: function(imageDataUrl, toPhone) {
             toPhone = this.e164verify(toPhone);
