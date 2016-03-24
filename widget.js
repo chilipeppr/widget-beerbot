@@ -1803,7 +1803,8 @@ G1 Y45
             });
         },
         setupQueueButtons: function() {
-            $('#' + this.id + " .btn-wipe").click(this.onWipeQueue.bind(this));    
+            $('#' + this.id + " .btn-wipe").click(this.onWipeQueue.bind(this));   
+            $('#' + this.id + " .btn-refreshqueue").click(this.refreshQueueView.bind(this));
         },
         onWipeQueue: function() {
             var that = this;
@@ -1816,6 +1817,10 @@ G1 Y45
 
             if (this.isQueueRefreshing) {
                 console.warn("asked to refresh queue view, but alreayd refreshing");
+                var that = this;
+                setTimeout(function() {
+                    // that.refreshQueueView();
+                }, 1000);
                 return;
             }
             
