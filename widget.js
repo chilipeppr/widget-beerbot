@@ -363,6 +363,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 function(localMediaStream) {
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
+                    var videoEl2 = document.getElementById('com-zipwhip-widget-texterator-screensaver-video');
+                    videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     // that.videoEl = videoEl;
                     // that.localMediaStream = localMediaStream;
 
@@ -395,6 +397,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
             // pre photo snapped
             this.camPrePhotoCallback = function() {
+                // update the user phone number
+                var fmtph = that.formatPhone(phone);
+                $('#com-zipwhip-widget-texterator-screensaver .snap-step-phone').val(fmtph);
+                
                 // show the preview on screensaver
                 $('#com-zipwhip-widget-texterator-screensaver .campreview').removeClass("hidden");
                 
@@ -433,8 +439,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 {video: true, audio: false}, 
                 function(localMediaStream) {
                     that.localMediaStream = localMediaStream;
-                    var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
-                    videoEl.src = window.URL.createObjectURL(localMediaStream);
+                    //var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
+                    //videoEl.src = window.URL.createObjectURL(localMediaStream);
                     var videoEl2 = document.getElementById('com-zipwhip-widget-texterator-screensaver-video');
                     videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     
@@ -529,6 +535,15 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // this.sendMmsMessage(dataUrl, "18054514292");
             // Ted
             // this.sendMmsMessage(dataUrl, "12063510437");
+        },
+        formatPhone: function(phone) {
+            var fmtph = phone;
+            var ph = this.e164verify(phone);
+            ph = ph.replace(/^1/, "");
+            if (ph.match(/(\d\d\d)(\d\d\d)(.*)/)) {
+                fmtph = "(" + RegExp.$1 + ") " + RegExp.$2 + "-" + RegExp.$3;
+            }
+            return fmtph;
         },
         /**
          * Pass in a phone number and it verifies it is in e164 format
