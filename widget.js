@@ -1029,7 +1029,7 @@ G1 Y45
         },
         
         statusItems: {
-            "main_state" : ["M_INIT", "RUN", "ALARM", "BUSY"],
+            "main_state" : ["M_INIT", "CAN_RUN", "ALARM", "BUSY"],
             "table_state" : ["INIT", "STOPPED", "INDEX", "UNLOCK", "UNLOCKED", "ADVANCE", "LOCK"],
             "table_block" : ["NOTBLOCKED", "LIFT_BLOCK", "LASER_BLOCK", "LIFT_AND_LASER_BLOCK"],
             "slots" : ["-", "EMPTY", "BEER", "MARKED"],
