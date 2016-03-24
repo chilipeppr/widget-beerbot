@@ -261,7 +261,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             this.setupWatchGcodeDonePubSub();
             this.setupLaserBtns();
             this.setupQueueButtons();
-            this.setupLazySusanBtns();
+            this.setupMachineBtns();
             
             // see if they passed in options
             if (opts && 'silent' in opts && opts.silent) {
@@ -648,13 +648,21 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
 		},
         
         /**
-         * Lazy Susan
+         * Machine. Lazy Susan
          */
-        setupLazySusanBtns: function() {
+        setupMachineBtns: function() {
             $('#' + this.id + ' .btn-advlazysusan').click(this.advanceLazySusan.bind(this));
+            $('#' + this.id + ' .btn-pourbeer').click(this.sendPourBeerCmd.bind(this));
+            $('#' + this.id + ' .btn-laserdone').click(this.sendLaserDoneCmd.bind(this));
         },
         advanceLazySusan: function() {
             this.sendSerial("ta\n");
+        },
+        sendPourBeerCmd: function() {
+            this.sendSerial("pourbeer\n");
+        },
+        sendLaserDoneCmd: function() {
+            this.sendSerial("laserdone\n");
         },
         
         /**
@@ -1014,7 +1022,7 @@ G1 Y45
         statusItems: {
             "main_state" : ["M_INIT", "RUN", "ALARM", "BUSY"],
             "table_state" : ["INIT", "STOPPED", "INDEX", "UNLOCK", "UNLOCKED", "ADVANCE", "LOCK"],
-            "table_block" : ["NOTBLOCKED"],
+            "table_block" : ["NOTBLOCKED", "LIFT_BLOCK", "LASER_BLOCK", "LIFT_AND_LASER_BLOCK"],
             "slots" : ["-", "EMPTY", "BEER", "MARKED"],
             "laser_state" : ["LASER_INIT", "LASER_IDLE", "WAITINGFORLASER", "CUPMARKED"],
             "e_type" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"]
