@@ -665,8 +665,19 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         camError: function(err) {
             console.error("video. Got err on initting cam. err:", err);
         },
-        // camAfterPhotoCallback: null,
+        
+        isActiveOnCupPickupSnapPhoto: false, // debounce all other calls until done
         camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms: function(phone) {
+            
+            // debounce
+            // cuz we can't get called at the same time as the cam snap process is occurring
+            // cuz it's long and async
+            if (this.isActiveOnCupPickupSnapPhoto) {
+                console.error("cam. got asked to take a photo while another was in process. skipping.");
+                return;
+            }
+            
+            this.isActiveOnCupPickupSnapPhoto = true;
             
             var that = this;
             
@@ -702,6 +713,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 
                 // send mms
                 that.sendMmsMessage(dataUrl, phone, "Enjoy your beer and make sure to thank the Zipwhip team for creating me!");
+                
+                // mark that we're done taking the photo so another one can get taken
+                that.isActiveOnCupPickupSnapPhoto = false;
                 
                 that.camPostPhotoCallback = null;
             }
@@ -1411,7 +1425,14 @@ G1 Y45
             console.log("slotstatus. looks like slot status changed. lastSlots", this.lastSlots, "newslots:", newslots);
           
             // we need to look at the changes and see if a cup was just picked up
-            
+            for (var i = 0; i < 8; i++) {
+                // if last status of slot was beer (2) or marked (3)
+                // and now the new status is nocup (0)
+                // then we have a cup pickup event!!!!!!
+                if (this.lastSlots[i] >= 2 && newslots[i] == 0) {
+                    this.onCupPickedUp(this.slotState[i]);
+                }
+            }
             
             this.lastSlots = newslots; 
             
@@ -1438,6 +1459,29 @@ G1 Y45
                 var row = $('<tr><td>' + (i+1) + '</td><td>' + status + '</td><td>' + slotObj.queueId + '</td><td>' + slotObj.phone + '</td></tr>');
                 tableEl.append(row);
             }
+        },
+        /**
+         * We get this call when the slot status changes from beer/marked to nocup
+         * We may get a bunch of these at the same time, so debounce cuz the 10 sec process
+         * to snap a photo can only really happen for the first person and the rest will just
+         * have to get ignored.
+         */
+        onCupPickedUp: function(obj) {
+            
+            // we can call this as much as we want cuz it debounces. additional calls to it
+            // during the long 10 sec process will just exit
+            this.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms(obj.phone);
+            
+            var that = this;
+            
+            // now update the database to change that the status is now Cup gone.
+            this.getQueue(obj.queueId, function(qrec) {
+                qrec.status = "Cup gone";
+                this.updateQueue(qrec, function() {
+                    console.log("updateQueue finished. can now refresh view.")
+                    that.refreshQueueView();
+                });
+            })
         },
         
         updateQueueToAdvanceSlotsForActiveItems: function() {
