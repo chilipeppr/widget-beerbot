@@ -426,7 +426,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 $('#com-zipwhip-widget-texterator-screensaver .campreview').addClass("hidden");
                 
                 // send mms
-                that.sendMmsMessage(dataUrl, phone);
+                that.sendMmsMessage(dataUrl, phone, "Enjoy your beer and make sure to thank the Zipwhip team for creating me!");
                 
                 that.camPostPhotoCallback = null;
             }
@@ -571,7 +571,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             console.log("e164verify. returning:", newphone);
             return newphone;
         },
-        sendMmsMessage: function(imageDataUrl, toPhone) {
+        sendMmsMessage: function(imageDataUrl, toPhone, msg) {
             toPhone = this.e164verify(toPhone);
             var blobBin = atob(imageDataUrl.split(',')[1]);
             console.log("binary byte size of image:", blobBin.length);
@@ -589,7 +589,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 console.log("got sessionkey. payload:", payload);
                 var sessionkey = payload.sessionkey;
                 $.ajax({
-                    url: "http://landline.zipwhip.com/messaging/send/?session=" + sessionkey + "&to=" + toPhone + "&body=this+is+my+body",
+                    url: "http://landline.zipwhip.com/messaging/send/?session=" + sessionkey + "&to=" + toPhone + "&body=" + msg,
                     type: "POST",
                     data: formdata,
                     processData: false,
