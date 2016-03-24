@@ -566,6 +566,12 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             setTimeout(function() {
                 // that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
             }, 20000);
+            
+            // turn off 3d viewer cuz too much contention
+            setTimeout(function() {
+                $('.com-chilipeppr-widget-3dviewer-settings-fr-0').trigger("click");
+            }, 5000);
+            
 
             console.log("I am done being initted.");
         },
@@ -1960,7 +1966,7 @@ G1 Y45
                 // we get it too early, so delay by about 3 seconds to be safe
                 setTimeout(function() {
                     that.sendSerial("laserdone\n");
-                }, 10000);
+                }, 2000);
                 
                 
             });
