@@ -1267,6 +1267,12 @@ G1 Y45
                 
                 // cleanup errors
                 line = line.replace(/},"las/, ',"las');
+                // {"e":{,"etype":1"slots":[1,2,0,0,0,0,0,0],"index":65}}
+                line = line.replace(/{,"et/, '{"et');
+                line = line.replace(/0"slots"/, '0,"slots"');
+                line = line.replace(/1"slots"/, '1,"slots"');
+                line = line.replace(/2"slots"/, '2,"slots"');
+                line = line.replace(/3"slots"/, '3,"slots"');
                 
                 // we have json
                 var json = JSON.parse(line);
@@ -1278,6 +1284,9 @@ G1 Y45
                     var sr = json.sr;
                     
                     this.statusUpdated(sr);
+                }
+                else if ('e' in json) {
+                    this.statusUpdated(json.e);
                 }
                 else if ('done' in json) {
                     // a done command came in
@@ -1295,7 +1304,7 @@ G1 Y45
             "table_block" : ["NOTBLOCKED", "LIFT_BLOCK", "LASER_BLOCK", "LIFT_AND_LASER_BLOCK"],
             "slots" : ["-", "EMPTY", "BEER", "MARKED"],
             "laser_state" : ["LASER_INIT", "LASER_IDLE", "WAITINGFORLASER", "CUPMARKED"],
-            "e_type" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"]
+            "etype" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"]
         },
         /**
          * This method is called if the status is updated from incoming serial data so that we
