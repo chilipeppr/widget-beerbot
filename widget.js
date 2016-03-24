@@ -361,9 +361,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             var that = this;
             navigator.getUserMedia({video: true, audio: false}, 
                 function(localMediaStream) {
-                    var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
+                    var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
-                    // var videoEl2 = document.querySelector('#com-chilipeppr-texterator-screensaver-video');
+                    // var videoEl2 = document.querySelector('#com-zipwhip-texterator-screensaver-video');
                     // videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     // that.videoEl = videoEl;
                     // that.localMediaStream = localMediaStream;
@@ -399,7 +399,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             this.camPrePhotoCallback = function() {
                 // update the user phone number
                 var fmtph = that.formatPhone(phone);
-                $('#com-zipwhip-widget-texterator-screensaver .snap-step-phone').val(fmtph);
+                $('#com-zipwhip-widget-texterator-screensaver .snap-step-phone').text(fmtph);
                 
                 // show the preview on screensaver
                 $('#com-zipwhip-widget-texterator-screensaver .campreview').removeClass("hidden");
@@ -439,9 +439,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 {video: true, audio: false}, 
                 function(localMediaStream) {
                     that.localMediaStream = localMediaStream;
-                    var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
+                    var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
-                    var videoEl2 = document.querySelector('#com-chilipeppr-texterator-screensaver-video');
+                    var videoEl2 = document.querySelector('#com-zipwhip-texterator-screensaver-video');
                     videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     
                     // now the camOnCanPlay will get called automatically
@@ -470,14 +470,14 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
         },
         camImmediatelySnapPhoto: function() {
-            var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
+            var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
                     
-            var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
+            var canvas = document.getElementById('com-zipwhip-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
             //console.log("videoEl:", videoEl, "context:", context);
             
             // overlay logo over the canvas
-            var logo = document.getElementById('com-chilipeppr-texterator-uservideo-logo');
+            var logo = document.getElementById('com-zipwhip-texterator-uservideo-logo');
             var logoEl = $(logo);
             // console.log("logo:", logo, "logoEl", logoEl);
             
@@ -499,7 +499,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             context.drawImage(logo, 0, height, newLogoWidth, newLogoHeight);
             
             var data = canvas.toDataURL('image/png');
-            var photo = document.getElementById('com-chilipeppr-texterator-uservideo-photo');
+            var photo = document.getElementById('com-zipwhip-texterator-uservideo-photo');
             photo.setAttribute('src', data);
             console.log("video. done taking picture.");
 
@@ -520,13 +520,13 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     track.stop();
                 });
                 console.log("stopped localMediaStream:", this.localMediaStream, "tracks:", this.localMediaStream.getTracks());
-                var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
+                var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
                 // videoEl.src = window.webkitURL.createObjectURL(null);
             }
         },
         sendTestMMS: function() {
             //this.camTakePicture();
-            var canvas = document.getElementById('com-chilipeppr-texterator-uservideo-canvas');
+            var canvas = document.getElementById('com-zipwhip-texterator-uservideo-canvas');
             var dataUrl = canvas.toDataURL('image/png');
             this.sendMmsMessage(dataUrl, "13134147502");
             // this.sendMmsMessage(dataUrl, "12066872025");
