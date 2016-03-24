@@ -366,10 +366,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             var that = this;
             navigator.getUserMedia({video: true, audio: false}, 
                 function(localMediaStream) {
-                    var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
+                    // var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
+                    // videoEl.src = window.URL.createObjectURL(localMediaStream);
+                    var videoEl = document.querySelector('#com-zipwhip-texterator-screensaver-video');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
-                    // var videoEl2 = document.querySelector('#com-zipwhip-texterator-screensaver-video');
-                    // videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     // that.videoEl = videoEl;
                     // that.localMediaStream = localMediaStream;
 
@@ -458,8 +458,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 {video: true, audio: false}, 
                 function(localMediaStream) {
                     that.localMediaStream = localMediaStream;
-                    var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
-                    videoEl.src = window.URL.createObjectURL(localMediaStream);
+                    // var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
+                    // videoEl.src = window.URL.createObjectURL(localMediaStream);
                     var videoEl2 = document.querySelector('#com-zipwhip-texterator-screensaver-video');
                     videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     
@@ -489,7 +489,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
         },
         camImmediatelySnapPhoto: function() {
-            var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
+            // var videoEl = document.querySelector('#com-zipwhip-texterator-uservideo');
+            var videoEl = document.querySelector('#com-zipwhip-texterator-screensaver-video');
                     
             var canvas = document.getElementById('com-zipwhip-texterator-uservideo-canvas');
             var context = canvas.getContext('2d');
