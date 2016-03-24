@@ -1206,16 +1206,16 @@ G1 Y45
                 return;
             }
             
+            // we can call this as much as we want cuz it debounces. additional calls to it
+            // during the long 10 sec process will just exit
+            if (obj.phone && obj.phone.length > 0)
+                this.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms(obj.phone);
+            
             // update state to see debug that cup got picked up
             if ('phone' in this.slotState[slotIndex]) {
                 this.slotState[slotIndex].phone += " (Cup gone)";
                 this.refreshSlotStatus();
             }
-            
-            // we can call this as much as we want cuz it debounces. additional calls to it
-            // during the long 10 sec process will just exit
-            if (obj.phone && obj.phone.length > 0)
-                this.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms(obj.phone);
             
             var that = this;
             
