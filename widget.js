@@ -1819,7 +1819,7 @@ G1 Y45
                 console.warn("asked to refresh queue view, but alreayd refreshing");
                 var that = this;
                 setTimeout(function() {
-                    // that.refreshQueueView();
+                    that.refreshQueueView();
                 }, 1000);
                 return;
             }
@@ -1838,6 +1838,7 @@ G1 Y45
             var cursorRequest = store.openCursor(null, 'prevunique'); // next or prev
             
             var that = this;
+            var recordCount = 0;
             cursorRequest.onsuccess = function(e) {
 
                 var cursor = e.target.result;
@@ -1875,6 +1876,14 @@ G1 Y45
                         '</td></tr>' +
                     '');
                     tableEl.append(row);
+                    
+                    // don't go more than 30 records
+                    recordCount++;
+                    if (recordCount > 30) {
+                        console.log("not showing more than 30 records for queue");
+                        that.isQueueRefreshing = false;
+                        return;
+                    }
                     
                     cursor.continue();
                 }
