@@ -363,8 +363,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 function(localMediaStream) {
                     var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
                     videoEl.src = window.URL.createObjectURL(localMediaStream);
-                    var videoEl2 = document.querySelector('#com-chilipeppr-texterator-screensaver-video');
-                    videoEl2.src = window.URL.createObjectURL(localMediaStream);
+                    // var videoEl2 = document.querySelector('#com-chilipeppr-texterator-screensaver-video');
+                    // videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     // that.videoEl = videoEl;
                     // that.localMediaStream = localMediaStream;
 
@@ -439,10 +439,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 {video: true, audio: false}, 
                 function(localMediaStream) {
                     that.localMediaStream = localMediaStream;
-                    //var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
-                    //videoEl.src = window.URL.createObjectURL(localMediaStream);
-                    // var videoEl2 = document.querySelector('#com-zipwhip-widget-texterator-screensaver-video');
-                    // videoEl2.src = window.URL.createObjectURL(localMediaStream);
+                    var videoEl = document.querySelector('#com-chilipeppr-texterator-uservideo');
+                    videoEl.src = window.URL.createObjectURL(localMediaStream);
+                    var videoEl2 = document.querySelector('#com-chilipeppr-texterator-screensaver-video');
+                    videoEl2.src = window.URL.createObjectURL(localMediaStream);
                     
                     // now the camOnCanPlay will get called automatically
                     console.log("got user media and local stream. camOnCanPlay should get called automatically next.");
