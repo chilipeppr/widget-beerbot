@@ -676,6 +676,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             $('#' + this.id + ' .btn-advlazysusan').click(this.advanceLazySusan.bind(this));
             $('#' + this.id + ' .btn-pourbeer').click(this.sendPourBeerCmd.bind(this));
             $('#' + this.id + ' .btn-laserdone').click(this.sendLaserDoneCmd.bind(this));
+            $('#' + this.id + ' .btn-tloff').click(this.sendTableLockOffCmd.bind(this));
+            $('#' + this.id + ' .btn-tlon').click(this.sendTableLockOnCmd.bind(this));
         },
         advanceLazySusan: function() {
             this.sendSerial("ta\n");
@@ -685,6 +687,12 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         },
         sendLaserDoneCmd: function() {
             this.sendSerial("laserdone\n");
+        },
+        sendTableLockOffCmd: function() {
+            this.sendSerial("tloff\n");
+        },
+        sendTableLockOnCmd: function() {
+            this.sendSerial("tlon\n");
         },
         
         /**
