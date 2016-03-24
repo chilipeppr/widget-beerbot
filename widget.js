@@ -1090,7 +1090,7 @@ G1 Y45
         lastTableIndex: -1,
         onTableIndexChange: function(newindex) {
           
-          console.log("looks like table index changed. lastTableIndex", this.lastTableIndex, "newindex:", newindex);
+          console.log("tableindex. looks like table index changed. lastTableIndex", this.lastTableIndex, "newindex:", newindex);
           // we just saw the table move forward, so update the slot numbers
           // for all users in queue table that are in a cup pickup state
           this.updateQueueToAdvanceSlotsForActiveItems();
@@ -1098,7 +1098,7 @@ G1 Y45
           this.lastTableIndex = newindex;  
         },
         updateQueueToAdvanceSlotsForActiveItems: function() {
-            console.log("updateQueueToAdvanceSlotsForActiveItems");
+            console.log("tableindex. updateQueueToAdvanceSlotsForActiveItems");
             var store = this.getObjectStore(this.DB_STORE_NAME_QUEUE, "readwrite");
             var cursorRequest = store.openCursor(null, 'prev'); // next or prev
             
@@ -1110,20 +1110,20 @@ G1 Y45
                 var cursor = e.target.result;
                 if (cursor) {
                     if (cursor.value.status.match(/^Cup pickup/)) {
-                        console.log("user has a Cup pickup waiting. id:", cursor.key);
+                        console.log("tableindex. user has a Cup pickup waiting. id:", cursor.key);
                         var updateData = cursor.value;
           
                         updateData.slot++;
                         var request = cursor.update(updateData);
                         request.onsuccess = function() {
-                          console.log('Incremented slot count for cursor:', updateData);
+                          console.log('tableindex. Incremented slot count for cursor:', updateData);
                         };
                         
                     }
                     else if (cursor.value.status.match(/^Cup gone/)) {
                         cupGoneCnt++
                         if (cupGoneCnt > 8) {
-                            console.log("hit cupGoneCnt limit. exiting analysis of slot move fwd.");
+                            console.log("tableindex. hit cupGoneCnt limit. exiting analysis of slot move fwd.");
                             return;
                         }
                     }
