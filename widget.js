@@ -1679,7 +1679,11 @@ G1 Y45
                 });
                 
                 // send laserdone to Arduino
-                that.sendSerial("laserdone\n");
+                // we get it too early, so delay by about 3 seconds to be safe
+                setTimeout(function() {
+                    that.sendSerial("laserdone\n");
+                }, 3000);
+                
                 
             });
         },
