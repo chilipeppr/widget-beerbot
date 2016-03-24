@@ -1490,6 +1490,12 @@ G1 Y45
                 return;
             }
             
+            // if queueId is currently being lasered, ignore this signal cuz it's a lie
+            if (obj.queueId == this.activeQueueIdLasering) {
+                console.warn("got onCupPickedUp during lasering of cup. this is a lie. ignore.");
+                return;
+            }
+            
             // we can call this as much as we want cuz it debounces. additional calls to it
             // during the long 10 sec process will just exit
             if (obj.phone && obj.phone.length > 0)
