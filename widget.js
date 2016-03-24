@@ -1128,12 +1128,14 @@ G1 Y45
           
             console.log("slotstatus. looks like slot status changed. lastSlots", this.lastSlots, "newslots:", newslots);
           
+            this.lastSlots = newslots; 
+            
             // we just saw the table move forward, so update the slot numbers
             // for all users in queue table that are in a cup pickup state
             //   this.updateQueueToAdvanceSlotsForActiveItems();
             this.refreshSlotStatus();
             
-            this.lastSlots = newslots;  
+             
         },
         refreshSlotStatus: function() {
             
