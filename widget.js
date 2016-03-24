@@ -1014,7 +1014,7 @@ G1 Y45
         statusItems: {
             "main_state" : ["M_INIT", "RUN", "ALARM", "BUSY"],
             "table_state" : ["INIT", "STOPPED", "INDEX", "UNLOCK", "UNLOCKED", "ADVANCE", "LOCK"],
-            "table_block" : [],
+            "table_block" : ["NOTBLOCKED"],
             "slots" : ["NOCUP", "EMPTY", "BEER", "MARKED"],
             "laser_state" : ["LASER_INIT", "LASER_IDLE", "WAITINGFORLASER", "CUPMARKED"],
             "e_type" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"]
@@ -1031,7 +1031,7 @@ G1 Y45
             var el = $('#' + this.id + ' .table-status');
             for (var key in sr) {
                 if (key == "index") {
-                    el.find("index").text(sr[key]);
+                    el.find(".index").text(sr[key]);
                 }
                 else if (key == "slots") {
                     // parse slots
@@ -1042,7 +1042,7 @@ G1 Y45
                         var slotVal = sr.slots[i];
                         slotTxtArr.push(this.statusItems.slots[slotVal]);
                     }
-                    el.find("slots").text(slotTxtArr.join(","));
+                    el.find(".slots").text(slotTxtArr.join(","));
                 }
                 else {
                     var val = parseInt(sr[key]);
