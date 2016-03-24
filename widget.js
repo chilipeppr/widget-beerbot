@@ -261,6 +261,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             this.setupWatchGcodeDonePubSub();
             this.setupLaserBtns();
             this.setupQueueButtons();
+            this.setupLazySusanBtns();
             
             // see if they passed in options
             if (opts && 'silent' in opts && opts.silent) {
@@ -281,7 +282,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             this.setupScreenSaver();
             // this.screenSaverAnim();
             setTimeout(function() {
-                that.screenSaverShow();
+                // that.screenSaverShow();
             }, 5500);
 
             // setup cam last cuz it errors out
@@ -289,11 +290,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
             // pretend a snap of a photo
             setTimeout(function() {
-                that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
+                // that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
             }, 10000);
              // pretend a snap of a photo
             setTimeout(function() {
-                that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
+                // that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
             }, 20000);
 
             console.log("I am done being initted.");
@@ -455,7 +456,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             );
 
         },
-        camPrePhotoCallback: null, // can set a callback when video is live, but 3 seconds until snap
+        camPrePhotoCallback: null, // can set a callback when video is live, but 6 seconds until snap
         camPostPhotoCallback: null, // can set a callback after photo snapped and cam turned off
         camOnCanPlay: function(ev) {
             console.log("camOnCanPlay. video seems to be playing. got canplay. args:", arguments);
@@ -645,6 +646,16 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
 			  document.location = '#final/'+$('#phone').val();
 			});
 		},
+        
+        /**
+         * Lazy Susan
+         */
+        setupLazySusanBtns: function() {
+            $('#' + this.id + ' .btn-advlazysusan').click(this.advanceLazySusan.bind(this));
+        },
+        advanceLazySusan: function() {
+            this.sendSerial("ta\n");
+        },
         
         /**
          * Laser Methods
@@ -883,6 +894,13 @@ G1 Y45
                 });
             }
             
+        },
+        sendText: function(to, body) {
+            var payload = {
+                to: to,
+                body: body
+            };
+            chilipeppr.publish("/com-chilipeppr-widget-recvtext/send", payload);   
         },
         
         /**
@@ -1270,7 +1288,7 @@ G1 Y45
                 });
                 
                 // this.sendSerial("vendBeer()\n");
-                that.sendSerial("pourbeer()\n");
+                that.sendSerial("pourbeer\n");
                 
             });
         },
@@ -1320,6 +1338,9 @@ G1 Y45
                 // generate gcode for this user for lasering to see it in 3d display
                 // and in gcode widget
                 that.genGcodeForUserAndLoadIntoChiliPeppr(qrecord);
+                
+                // send them a text telling them their beer is just about ready
+                that.sendText(qrecord.phone, "Ur beer cup is now getting lasered with the last 4 digits of your phone number. Get ready to pick it up!");
             });
         },
         /**
@@ -1343,9 +1364,19 @@ G1 Y45
                 });
                 
                 // send laserdone to Arduino
-                that.sendSerial("laserdone()");
+                that.sendSerial("laserdone");
                 
             });
+        },
+        
+        /**
+         * If user picked up cup, then run this code here to send them a text.
+         */
+        onPickedUpCup: function(phone) {
+            
+            console.log("onPickedUpCup");
+            
+            this.sendText(phone, "Your beer is ready for pickup.");
         },
         
         /**
@@ -1397,7 +1428,7 @@ G1 Y45
                 // trigger immediately.
                 setTimeout(function() {
                     chilipeppr.publish("/com-chilipeppr-widget-gcode/play");
-                }, 2500);
+                }, 1500);
             });
         },
         setupWatchGcodeDonePubSub: function() {
@@ -1407,6 +1438,11 @@ G1 Y45
             console.log("got gcode done. payload:", payload);
             this.onLaseringDone();
         },
+        
+        /**
+         * DATABASE SECTION
+         */
+         
         /**
          * We add the user to the beer queue, but that does nothing more than write to the db. It is
          * up to the independent queue consumption trigerring to pull the queue and see what to do next.
@@ -1423,13 +1459,7 @@ G1 Y45
                 });
             });
         },
-        sendText: function(to, body) {
-            var payload = {
-                to: to,
-                body: body
-            };
-            chilipeppr.publish("/com-chilipeppr-widget-recvtext/send", payload);   
-        },
+        
         userUpdateOrAddThenGet: function(msg, callback) {
             // look up if we have this user in our record already
             var that = this;
@@ -1813,6 +1843,10 @@ G1 Y45
             
         },
         
+        /**
+         * 3D VIEWER SECTION
+         */
+         
         /**
          * Try to get a reference to the 3D viewer.
          */
