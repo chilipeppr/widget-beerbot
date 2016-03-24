@@ -1211,6 +1211,8 @@ G1 Y45
             // debounce bad data at start
             if (obj.queueId == 0) {
                 console.log("onCupPickedUp. dropping queueId 0");
+                this.slotState[slotIndex].phone += " (Bad queueId)";
+                this.refreshSlotStatus();
                 return;
             }
             
@@ -1225,6 +1227,7 @@ G1 Y45
                 console.warn("got onCupPickedUp during lasering of cup. this is a lie. ignore.");
                 return;
             }
+            
             
             // we can call this as much as we want cuz it debounces. additional calls to it
             // during the long 10 sec process will just exit
