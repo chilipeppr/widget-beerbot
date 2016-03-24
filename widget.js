@@ -1077,6 +1077,17 @@ G1 Y45
                 this.onTableIndexChange(sr.index);
             }
             
+            // see if we saw a change in slots
+            if ('slots' in sr) {
+                var is_same = (sr.slots.length == this.lastSlots.length) && this.lastSlots.every(function(element, index) {
+                    return element === sr.slots[index]; 
+                });
+                if (!is_same) {
+                    // the arrays are not the same, there was a change
+                    this.onSlotStatusChange(sr.slots);
+                }
+            }
+            
             // check if done vending beer
             if ('etype' in sr && sr.etype == 1) {
                 this.onDoneVendBeer();
@@ -1090,13 +1101,57 @@ G1 Y45
         lastTableIndex: -1,
         onTableIndexChange: function(newindex) {
           
-          console.log("tableindex. looks like table index changed. lastTableIndex", this.lastTableIndex, "newindex:", newindex);
-          // we just saw the table move forward, so update the slot numbers
-          // for all users in queue table that are in a cup pickup state
-          this.updateQueueToAdvanceSlotsForActiveItems();
-          
-          this.lastTableIndex = newindex;  
+            console.log("tableindex. looks like table index changed. lastTableIndex", this.lastTableIndex, "newindex:", newindex);
+            // we just saw the table move forward, so update the slot numbers
+            // for all users in queue table that are in a cup pickup state
+            this.updateQueueToAdvanceSlotsForActiveItems();
+            
+            this.lastTableIndex = newindex;  
         },
+        
+        // Keep track of last slot state to see if new state is different
+        lastSlots : [-1,-1,-1,-1,-1,-1,-1,-1],
+        /**
+         * Initial default states for slots
+         */
+        slotState: [
+            {queueId: 0, phone: ""},
+            {queueId: 0, phone: ""},
+            {queueId: 0, phone: ""},
+            {queueId: 0, phone: ""},
+            {queueId: 0, phone: ""},
+            {queueId: 0, phone: ""},
+            {queueId: 0, phone: ""},
+            {queueId: 0, phone: ""}
+        ],
+        onSlotStatusChange: function(newslots) {
+          
+            console.log("slotstatus. looks like slot status changed. lastSlots", this.lastSlots, "newslots:", newslots);
+          
+            // we just saw the table move forward, so update the slot numbers
+            // for all users in queue table that are in a cup pickup state
+            //   this.updateQueueToAdvanceSlotsForActiveItems();
+            this.refreshSlotStatus();
+            
+            this.lastSlots = newslots;  
+        },
+        refreshSlotStatus: function() {
+            
+            var tableEl = $('#' + this.id + ' .table-slotstatus');
+            var hdr = $('<tr><th>Slot</th><th>Status</th><th>QueueId</th><th>Phone</th></tr>');
+            
+            tableEl.empty().append(hdr);
+            
+            // loop thru lastSlots and slotStatus arrays to merge their data into a visual display
+            for (var i = 0; i < 8; i++) {
+                var slotVal = this.lastSlots[i];
+                var status = this.statusItems.slots[slotVal];
+                var slotObj = this.slotState[i];
+                var row = $('<tr><td>' + status + '</td><td>' + slotObj.queueId + '</td><td>' + slotObj.phone + '</td></tr>');
+                tableEl.append(row);
+            }
+        },
+        
         updateQueueToAdvanceSlotsForActiveItems: function() {
             console.log("tableindex. updateQueueToAdvanceSlotsForActiveItems");
             var store = this.getObjectStore(this.DB_STORE_NAME_QUEUE, "readwrite");
@@ -1143,16 +1198,17 @@ G1 Y45
             this.refreshQueueView();
         },
         
+        
         /**
          * Queue commands
          */
 
         /**
-         * The status of the arduino/nodemcu. It auto-updates when we see incoming serial data.
+         * NOT USED. The status of the arduino/nodemcu. It auto-updates when we see incoming serial data.
          */
         sr: {"slots":[1,1,1,0,0,0,0,0], "beer":1, "stat":1},
         /**
-         * The status of the laser. Auto-updates based on Gcode execution on TinyG
+         * NOT USED. The status of the laser. Auto-updates based on Gcode execution on TinyG
          */
         laserSr: {stat: 1},
 
@@ -1424,6 +1480,12 @@ G1 Y45
                     that.refreshQueueView();
                 });
                 
+                // update our in-memory version of the slot states
+                // this array item will get moved forward thru the array as
+                // the table index change event comes in, so this is where we seed it
+                that.slotState[0] = {queueId: queueId, phone:qrecord.phone};
+                that.refreshSlotStatus();
+                
                 // this.sendSerial("vendBeer()\n");
                 that.sendSerial("pourbeer\n");
                 
@@ -1439,6 +1501,13 @@ G1 Y45
             var queueId = this.activeQueueIdVendingBeer;
             this.activeQueueIdVendingBeer = null;
             this.getQueue(queueId, function(qrec) {
+                
+                // update our in-memory version of the slot states
+                // we know on done that the beer cup is now under the laser
+                // that.slotState[0] = null;
+                // that.slotState[1] = {queueId: queueId, phone:qrec.phone};
+                // that.refreshSlotStatus();
+                
                 qrec.status = "Beer done. Waiting for laser...";
                 qrec.endTime = new Date();
                 that.updateQueue(qrec, function() {
@@ -1447,6 +1516,8 @@ G1 Y45
                     // now that this is done, we need to just re-check the queue and go vend again
                     that.triggerQueue();
                 });
+                
+                
             });
             
         },
@@ -1470,6 +1541,10 @@ G1 Y45
                     // console.log("updateQueue finished. can now refresh view.")
                     that.refreshQueueView();
                 });
+                
+                // update our in-memory version of the slot states
+                // that.slotState[1] = {queueId: queueId, phone:qrecord.phone};
+                // that.refreshSlotStatus();
                 
                 // load the gcode
                 // generate gcode for this user for lasering to see it in 3d display
