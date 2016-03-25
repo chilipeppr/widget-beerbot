@@ -954,7 +954,7 @@ G1 Y45
         /**
          * Make sure to update the serial port that the arduino/nodemcu device is on that takes commands.
          */
-        comPort: "com10",
+        comPort: "com3",
         
         serialCtr: 0,
         sendSerial: function(cmd) {
