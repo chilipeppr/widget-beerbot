@@ -244,6 +244,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
         },
         /**
+         * Make sure to update the serial port that the arduino/nodemcu device is on that takes commands.
+         */
+        comPort: "com3",
+        /**
          * All widgets should have an init method. It should be run by the
          * instantiating code like a workspace or a different widget.
          */
@@ -275,6 +279,15 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             }
 
             this.setupTextListener();
+            
+            // attach to raw serial command
+            $('#' + this.id + " .rawserial").keypress(function(evt) {
+                if (evt.keyCode == 13) {
+                    var el = $('#' + that.id + " .rawserial");
+                    console.log("raw serial cmd is:", el.val(), "evt:", evt);
+                    that.sendSerial(el.val());
+                }
+            })
             
             this.setupUiFromLocalStorage();
             this.btnSetup();
@@ -951,10 +964,7 @@ G1 Y45
          * Serial commands for Arduino controlling Texterator
          */
          
-        /**
-         * Make sure to update the serial port that the arduino/nodemcu device is on that takes commands.
-         */
-        comPort: "com3",
+        
         
         serialCtr: 0,
         sendSerial: function(cmd) {
