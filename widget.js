@@ -313,6 +313,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 that.setupSerialPortSetupModal();
             }, 2000);
             
+            // ask spjs widget to dedupe repating incoming text lines cuz they do nothing for us
+            setTimeout(function() {
+                chilipeppr.publish('/com-chilipeppr-widget-serialport/dedupeOn');
+            }, 2500);
+            
             console.log("I am done being initted.");
         },
         
