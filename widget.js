@@ -1164,7 +1164,8 @@ G1 Y45
             "table_block" : ["NOTBLOCKED", "LIFT_BLOCK", "LASER_BLOCK", "LIFT_AND_LASER_BLOCK"],
             "slots" : ["-", "EMPTY", "BEER", "MARKED"],
             "laser_state" : ["LASER_INIT", "LASER_IDLE", "WAITINGFORLASER", "CUPMARKED"],
-            "etype" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"]
+            "etype" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"],
+            "beer_queue": ["DontKnow"],
         },
         /**
          * This method is called if the status is updated from incoming serial data so that we
