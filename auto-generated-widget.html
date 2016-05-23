@@ -610,6 +610,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 chilipeppr.publish('/com-chilipeppr-widget-serialport/ws/send', 'open COM3 115200 default\n');
                 setTimeout(function() {
                     chilipeppr.publish('/com-chilipeppr-widget-serialport/ws/send', 'open COM5 115200 tinyg\n');
+                    modalEl.find('.spjs-maybegood').removeClass("hidden");
                 }, 500);
             });
             
@@ -3506,6 +3507,9 @@ M5 (laser off)
                     The Arduino has historically been on COM3 while the TinyG has been on COM5, so we can attempt 
                     to connect those ports for you by clicking the button below.
                     <button class="btn btn-default btn-connect2ports">Connect COM3 (Arduino) and COM5 (TinyG)</button>
+                
+                    <span class="spjs-maybegood hidden"><br><br>If you see the two ports connected in lower right corner, you are good to go.
+                    Just dismiss this dialog and send in your first text message with word "beer".</span>
                 </p>
                 
               </div>

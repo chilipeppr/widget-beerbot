@@ -336,6 +336,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 chilipeppr.publish('/com-chilipeppr-widget-serialport/ws/send', 'open COM3 115200 default\n');
                 setTimeout(function() {
                     chilipeppr.publish('/com-chilipeppr-widget-serialport/ws/send', 'open COM5 115200 tinyg\n');
+                    modalEl.find('.spjs-maybegood').removeClass("hidden");
                 }, 500);
             });
             
