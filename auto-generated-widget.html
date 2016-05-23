@@ -589,10 +589,34 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 $('.com-chilipeppr-widget-3dviewer-settings-fr-0').trigger("click");
             }, 5000);
             
-
+            // show serial port setup modal to help newbies understand they must connect
+            setTimeout(function() {
+                that.setupSerialPortSetupModal();
+            }, 2000);
+            
+            
             console.log("I am done being initted.");
         },
         
+        setupSerialPortSetupModal: function() {
+            
+            var modalEl = $('#' + this.id + ' .serialconnectmodal');
+            
+            // check if serial ports connected
+            var callbackOnList = function(payload) {
+                console.log("got callback from /list. payload:", payload);
+                chilipeppr.unsubscribe('/com-chilipeppr-widget-serialport/list', callbackOnList);
+                
+                if (!payload) {
+                    modalEl.find('.spjs-notconnected').removeClass('hidden');
+                }
+                modalEl.modal({show:true});
+            }
+            chilipeppr.subscribe('/com-chilipeppr-widget-serialport/list', this, callbackOnList);
+            chilipeppr.publish('/com-chilipeppr-widget-serialport/getlist');
+            
+            
+        },
         setupScreenSaver: function() {
             $('#' + this.id + ' .btn-screensaver').click(this.screenSaverShow.bind(this));
             $('#' + this.id + "-screensaver .close2").click(this.onScreenSaverClose.bind(this));    
@@ -1617,7 +1641,7 @@ G1 Y45
          */
         triggerQueue: function() {
             
-            console.log("triggerQueue");
+                console.log("triggerQueue");
             
             if (this.isQueueTriggering) {
                 console.error("triggerQueue called again while in the middle of triggering");
@@ -3378,6 +3402,26 @@ M5 (laser off)
 
         </div>
         
+        <div class="serialconnectmodal modal fade" tabindex="-1" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Connect Serial Ports</h4>
+              </div>
+              <div class="modal-body">
+                <h3>We need to connect the Texterator Arduino serial port and the Texterator TinyG serial port.</h3>
+                
+                <p class="spjs-notconnected hidden">It looks like you have not connected to the local Serial Port JSON Server. Make sure the server is running and that you have connected to localhost in the Serial Port JSON Server in the lower right corner.</p>
+                
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
         
     </div>
     <div id="com-zipwhip-widget-texterator-screensaver" class="hidden" style="">

@@ -315,10 +315,34 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 $('.com-chilipeppr-widget-3dviewer-settings-fr-0').trigger("click");
             }, 5000);
             
-
+            // show serial port setup modal to help newbies understand they must connect
+            setTimeout(function() {
+                that.setupSerialPortSetupModal();
+            }, 2000);
+            
+            
             console.log("I am done being initted.");
         },
         
+        setupSerialPortSetupModal: function() {
+            
+            var modalEl = $('#' + this.id + ' .serialconnectmodal');
+            
+            // check if serial ports connected
+            var callbackOnList = function(payload) {
+                console.log("got callback from /list. payload:", payload);
+                chilipeppr.unsubscribe('/com-chilipeppr-widget-serialport/list', callbackOnList);
+                
+                if (!payload) {
+                    modalEl.find('.spjs-notconnected').removeClass('hidden');
+                }
+                modalEl.modal({show:true});
+            }
+            chilipeppr.subscribe('/com-chilipeppr-widget-serialport/list', this, callbackOnList);
+            chilipeppr.publish('/com-chilipeppr-widget-serialport/getlist');
+            
+            
+        },
         setupScreenSaver: function() {
             $('#' + this.id + ' .btn-screensaver').click(this.screenSaverShow.bind(this));
             $('#' + this.id + "-screensaver .close2").click(this.onScreenSaverClose.bind(this));    
@@ -1343,7 +1367,7 @@ G1 Y45
          */
         triggerQueue: function() {
             
-            console.log("triggerQueue");
+                console.log("triggerQueue");
             
             if (this.isQueueTriggering) {
                 console.error("triggerQueue called again while in the middle of triggering");
