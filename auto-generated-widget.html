@@ -326,8 +326,6 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
 
     console.log("test running of " + myWidget.id);
 
-    
-    
     // load 3dviewer
     // have to tweak our own widget to get it above the 3dviewer
     $('#' + myWidget.id).css('position', 'relative');
@@ -584,13 +582,10 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 // that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
             }, 20000);
             
-            
-            
             // show serial port setup modal to help newbies understand they must connect
             setTimeout(function() {
                 that.setupSerialPortSetupModal();
             }, 2000);
-            
             
             console.log("I am done being initted.");
         },
@@ -1472,7 +1467,11 @@ G1 Y45
                 }
                 else {
                     var val = parseInt(sr[key]);
-                    el.find('.' + key).text(this.statusItems[key][val]);
+                    if (this.statusItems) {
+                        el.find('.' + key).text(this.statusItems[key][val]);
+                    } else {
+                        console.error("this.statusItems should not be null. huh? key:", key)
+                    }
                 }
             }
             
