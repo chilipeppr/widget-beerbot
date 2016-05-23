@@ -328,6 +328,17 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             
             var modalEl = $('#' + this.id + ' .serialconnectmodal');
             
+            // attach btn event
+            var that = this;
+            modalEl.find('.btn-connect2ports').click(function(evt) {
+                console.log("connect 2 ports btn clicked. evt:", evt);
+                // /ws/send
+                chilipeppr.publish('/com-chilipeppr-widget-serialport/ws/send', 'open COM3 115200 default\n');
+                setTimeout(function() {
+                    chilipeppr.publish('/com-chilipeppr-widget-serialport/ws/send', 'open COM5 115200 tinyg\n');
+                }, 500);
+            });
+            
             // check if serial ports connected
             var callbackOnList = function(payload) {
                 console.log("got callback from /list. payload:", payload);
@@ -340,26 +351,49 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                     
                     // see if COM3 and COM5 are in list
                     var isHaveArduino = false;
+                    var isConnectedArduino = false;
                     var isHaveTinyG = false;
+                    var isConnectedTinyG = false;
+                    var isAllSet = false;
                     for(var i in payload) {
                         var serialPort = payload[i];
                         if ('Name' in serialPort) {
-                            if (serialPort.Name == "COM3") isHaveArduino = true;
-                            if (serialPort.Name == "COM5") isHaveTinyG = true;
+                            if (serialPort.Name == "COM3") {
+                                isHaveArduino = true;
+                                if (serialPort.IsOpen) isConnectedArduino = true;
+                            }
+                            if (serialPort.Name == "COM5") {
+                                isHaveTinyG = true;
+                                if (serialPort.IsOpen) isConnectedTinyG = true;
+                            }
                         }
                     }
                     
                     if (isHaveArduino && isHaveTinyG) {
                         // awesome! we have both
                         console.log("oh yeah, have both ports.");
-                        modalEl.find('.spjs-connect2ports').removeClass("hidden");
+                        
+                        // see if they're connected, if so we are done. don't show modal.
+                        if (isConnectedArduino && isConnectedTinyG) {
+                            // ports are connected done
+                            isAllSet = true;
+                        } else {
+                            // ports aren't connected.
+                            modalEl.find('.spjs-connect2ports').removeClass("hidden");
+                        }
+                       
                     } else {
                         modalEl.find('.spjs-no2ports').removeClass("hidden");
                     }
                 }
                 
                 // show modal now that we've decided above what error to show
-                modalEl.modal({show:true});
+                if (isAllSet) {
+                    console.log("we are all set. no need to show error modal.");
+                } else {
+                    // show error modal
+                    modalEl.modal({show:true});
+                }
             }
             chilipeppr.subscribe('/com-chilipeppr-widget-serialport/list', this, callbackOnList);
             chilipeppr.publish('/com-chilipeppr-widget-serialport/getlist');
