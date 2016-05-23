@@ -1193,6 +1193,7 @@ G1 Y45
                 }
                 else {
                     var val = parseInt(sr[key]);
+                    console.log("in else of key in sr. key:", key, "val:", val);
                     if (this.statusItems) {
                         el.find('.' + key).text(this.statusItems[key][val]);
                     } else {
