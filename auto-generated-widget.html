@@ -584,10 +584,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 // that.camOnCupPickupSnapPhotoUpdateScreensaverAndSendMms("3134147502");
             }, 20000);
             
-            // turn off 3d viewer cuz too much contention
-            setTimeout(function() {
-                $('.com-chilipeppr-widget-3dviewer-settings-fr-0').trigger("click");
-            }, 5000);
+            
             
             // show serial port setup modal to help newbies understand they must connect
             setTimeout(function() {
@@ -1115,6 +1112,16 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             // send event off as if the file was drag/dropped
             ///com-chilipeppr-elem-dragdrop/loadGcodeDoNotCreateRecentFileEntry
             chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", gcodetxt, info);    
+            
+            // turn on 3d viewer temporarily so can see results (turn off later)
+            setTimeout(function() {
+                $('.com-chilipeppr-widget-3dviewer-settings-fr-5').trigger("click");
+            }, 200);
+            
+            // turn off 3d viewer a bit later cuz too much contention
+            setTimeout(function() {
+                $('.com-chilipeppr-widget-3dviewer-settings-fr-0').trigger("click");
+            }, 5000);
         },
         laserHome: function() {
             // We need to first see if the xmin switch is on. we can send
