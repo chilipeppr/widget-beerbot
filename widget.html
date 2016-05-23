@@ -211,21 +211,46 @@
                 <h4 class="modal-title">Connect Serial Ports</h4>
               </div>
               <div class="modal-body">
-                <h3>We need to connect the Texterator Arduino serial port and the Texterator TinyG serial port.</h3>
+                <h3 style="margin-top: 0;margin-bottom: 20px;">We need to connect the Texterator Arduino serial port and the Texterator TinyG serial port.</h3>
                 
-                <p class="spjs-notconnected hidden">It looks like you have not connected to the local Serial 
-                Port JSON Server. Make sure the server is running and that you have connected to localhost 
-                in the Serial Port JSON Server in the lower right corner.<br><br>
-                To get the server running there is an icon on the desktop labeled "Step 1 Run" and that will launch
-                SPJS for you. It's a mini server that runs in the background.<br><br>
-                Then, once SPJS is running, you have to connect to it in the lower right corner widget in the "Your
-                Servers" tab. Connect to localhost and it should then show a list of serial ports to you which includes
-                COM3 (Arduino) and COM5 (TinyG).<br><br>
-                To get this dialog back just reload the whole browser window after you connect to SPJS in the widget 
-                in the lower right. Then we'll check again for you if you're truly connected. If you are we can 
-                then move to the next step which is to connect to COM3 and COM5.</p>
+                <p class="spjs-errmsg spjs-notconnected hidden">
+                    It looks like you have not connected to the local Serial 
+                    Port JSON Server. Make sure the server is running and that you have connected to localhost 
+                    in the Serial Port JSON Server in the lower right corner.<br><br>
+                    
+                    To get the server running there is an icon on the desktop labeled "Step 1 Run" and that will launch
+                    SPJS for you. It's a mini server that runs in the background.<br><br>
+                    
+                    Then, once SPJS is running, you have to connect to it in the lower right corner widget in the "Your
+                    Servers" tab. Connect to localhost and it should then show a list of serial ports to you which includes
+                    COM3 (Arduino) and COM5 (TinyG).<br><br>
+                    
+                    To get this dialog back just reload the whole browser window after you connect to SPJS in the widget 
+                    in the lower right. Then we'll check again for you if you're truly connected. If you are we can 
+                    then move to the next step which is to connect to COM3 and COM5.
+                </p>
 
-                <p>The Arduino has historically been on COM3 while the TinyG has been on COM5, so we can attempt to connect those ports for you.</p>
+                <p class="spjs-errmsg spjs-no2ports hidden">
+                    Uh oh. It looks like you are connected to SPJS, but we don't see port COM3 or COM5 which is 
+                    what we expect to have. Is the USB cable from Texterator plugged into this computer? Or
+                    does the Texterator have power?<br><br>
+                    
+                    If the USB cable isn't plugged in to this computer then we can't see the Texterator's two USB
+                    devices. Plug in the USB cable and then reload the browser.<br><br>
+                    
+                    If the Texterator has no power then the USB hub isn't fired up, nor are the two serial devices 
+                    inside the Texterator. Power up the Texterator and then reload this browser window again.<br><br>
+                    
+                </p>
+                
+                <p class="spjs-errmsg spjs-connect2ports hidden">
+                    It looks like you are not connected to the two serial ports that we need for Texterator to function
+                    correctly.<br><br>
+                    
+                    The Arduino has historically been on COM3 while the TinyG has been on COM5, so we can attempt 
+                    to connect those ports for you by clicking the button below.
+                    <button class="btn btn-default btn-connect2ports">Connect COM3 (Arduino) and COM5 (TinyG)</button>
+                </p>
                 
               </div>
               <div class="modal-footer">

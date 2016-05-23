@@ -335,7 +335,30 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
                 
                 if (!payload) {
                     modalEl.find('.spjs-notconnected').removeClass('hidden');
+                } else {
+                    console.log("we seem to have a payload, which means we are connected to spjs. good.");
+                    
+                    // see if COM3 and COM5 are in list
+                    var isHaveArduino = false;
+                    var isHaveTinyG = false;
+                    for(var i in payload) {
+                        var serialPort = payload[i];
+                        if ('Name' in serialPort) {
+                            if (serialPort.Name == "COM3") isHaveArduino = true;
+                            if (serialPort.Name == "COM5") isHaveTinyG = true;
+                        }
+                    }
+                    
+                    if (isHaveArduino && isHaveTinyG) {
+                        // awesome! we have both
+                        console.log("oh yeah, have both ports.");
+                        modalEl.find('.spjs-connect2ports').removeClass("hidden");
+                    } else {
+                        modalEl.find('.spjs-no2ports').removeClass("hidden");
+                    }
                 }
+                
+                // show modal now that we've decided above what error to show
                 modalEl.modal({show:true});
             }
             chilipeppr.subscribe('/com-chilipeppr-widget-serialport/list', this, callbackOnList);
