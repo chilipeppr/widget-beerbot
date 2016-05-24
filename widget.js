@@ -320,6 +320,11 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
                 //chilipeppr.publish('/com-chilipeppr-widget-serialport/dedupeOn');
             }, 2500);
             
+            setTimeout(function() {
+                $('.com-chilipeppr-widget-3dviewer-settings-fr-5').trigger("click");
+                chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
+            }, 200);
+            
             console.log("I am done being initted.");
         },
         
