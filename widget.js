@@ -314,8 +314,9 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
             }, 2000);
             
             // ask spjs widget to dedupe repating incoming text lines cuz they do nothing for us
+            // turn off for now cuz not working
             setTimeout(function() {
-                chilipeppr.publish('/com-chilipeppr-widget-serialport/dedupeOn');
+                //chilipeppr.publish('/com-chilipeppr-widget-serialport/dedupeOn');
             }, 2500);
             
             console.log("I am done being initted.");
@@ -1173,6 +1174,7 @@ G1 Y45
             "beer_queue": ["DontKnow"],
             "Mode": ["DontKnow"],
             "flow pulses": ["DontKnow"],
+            'slot_sensor': ["DontKnow"],
         },
         /**
          * This method is called if the status is updated from incoming serial data so that we
