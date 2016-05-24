@@ -27,6 +27,7 @@ requirejs.config({
         // Example of how to define the key (you make up the key) and the URL
         // Make sure you DO NOT put the .js at the end of the URL
         // SmoothieCharts: '//smoothiecharts.org/smoothie',
+        Three: '//i2dcui.appspot.com/slingshot?url=http://threejs.org/build/three.js',
     },
     shim: {
         // See require.js docs for how to define dependencies that
@@ -183,7 +184,7 @@ cprequire_test(["inline:com-zipwhip-widget-texterator"], function(myWidget) {
 } /*end_test*/ );
 
 // This is the main definition of your widget. Give it a unique name.
-cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other dependencies here */ ], function() {
+cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  /* other dependencies here */ ], function() {
     return {
         /**
          * The ID of the widget. You must define this and make it unique.
@@ -827,6 +828,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ["chilipeppr_ready", /* other d
         laserIt: function() {
             var that = this;
             var txt = $('#' + that.id + " .lasertxt").val();
+            console.log("laserIt called. txt:", txt);
             that.generateGcode(txt, function(gcode) {
                 that.sendGcodeToWorkspace(gcode);
             });
