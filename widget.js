@@ -843,6 +843,12 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
             });
         },
         sendGcodeToWorkspace: function(gcodetxt) {
+            
+            // turn on 3d viewer temporarily so can see results (turn off later)
+            $('.com-chilipeppr-widget-3dviewer-settings-fr-5').trigger("click");
+            chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
+            chilipeppr.publish('/com-chilipeppr-widget-3dviewer/drawextents');
+            
             var info = {
             	name: "Autogen Gcode for Texterator", 
             	lastModified: new Date()
@@ -857,12 +863,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
                 lastModified:info.lastModified,
             });    
             
-            // turn on 3d viewer temporarily so can see results (turn off later)
-            setTimeout(function() {
-                $('.com-chilipeppr-widget-3dviewer-settings-fr-5').trigger("click");
-                chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
-                chilipeppr.publish('/com-chilipeppr-widget-3dviewer/drawextents');
-            }, 200);
+            chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
+            chilipeppr.publish('/com-chilipeppr-widget-3dviewer/drawextents');
             
             // turn off 3d viewer a bit later cuz too much contention
             setTimeout(function() {
