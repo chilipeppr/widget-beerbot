@@ -594,6 +594,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
                 //chilipeppr.publish('/com-chilipeppr-widget-serialport/dedupeOn');
             }, 2500);
             
+            // turn on 3d viewer initially cuz it was making people think stuff was broken
+            // instead we turn it off after we render a 3d file so it uses less cpu
             setTimeout(function() {
                 $('.com-chilipeppr-widget-3dviewer-settings-fr-5').trigger("click");
                 chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
@@ -1130,7 +1132,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
             // turn off 3d viewer a bit later cuz too much contention
             setTimeout(function() {
                 $('.com-chilipeppr-widget-3dviewer-settings-fr-0').trigger("click");
-            }, 5000);
+            }, 2000);
         },
         laserHome: function() {
             // We need to first see if the xmin switch is on. we can send
