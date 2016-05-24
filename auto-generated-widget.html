@@ -2468,6 +2468,7 @@ G1 Y45
         * @param {string} mode either "readonly" or "readwrite"
         */
         getObjectStore: function(store_name, mode) {
+            console.log("being asked to getObjectStore. store_name:", store_name);
             var tx = this.db.transaction(store_name, mode);
             return tx.objectStore(store_name);
         },
