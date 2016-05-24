@@ -325,6 +325,8 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
             setTimeout(function() {
                 $('.com-chilipeppr-widget-3dviewer-settings-fr-5').trigger("click");
                 chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
+                chilipeppr.publish('/com-chilipeppr-widget-3dviewer/drawextents');
+                
             }, 2000);
             
             console.log("I am done being initted.");
@@ -859,6 +861,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
             setTimeout(function() {
                 $('.com-chilipeppr-widget-3dviewer-settings-fr-5').trigger("click");
                 chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
+                chilipeppr.publish('/com-chilipeppr-widget-3dviewer/drawextents');
             }, 200);
             
             // turn off 3d viewer a bit later cuz too much contention
