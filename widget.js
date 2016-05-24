@@ -1172,6 +1172,7 @@ G1 Y45
             "etype" : ["NA", "WAITING_FOR_LASER", "BEER_UP", "BEER_VALID"],
             "beer_queue": ["DontKnow"],
             "Mode": ["DontKnow"],
+            "flow pulses": ["DontKnow"],
         },
         /**
          * This method is called if the status is updated from incoming serial data so that we
