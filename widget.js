@@ -1382,6 +1382,7 @@ G1 Y45
         
         updateQueueToAdvanceSlotsForActiveItems: function() {
             console.log("tableindex. updateQueueToAdvanceSlotsForActiveItems");
+            if (!this.db) return;
             var store = this.getObjectStore(this.DB_STORE_NAME_QUEUE, "readwrite");
             var cursorRequest = store.openCursor(null, 'prev'); // next or prev
             
@@ -2194,7 +2195,8 @@ G1 Y45
         * @param {string} mode either "readonly" or "readwrite"
         */
         getObjectStore: function(store_name, mode) {
-            console.log("being asked to getObjectStore. store_name:", store_name);
+            // console.log("being asked to getObjectStore. store_name:", store_name);
+            // if (!this.db) return;
             var tx = this.db.transaction(store_name, mode);
             return tx.objectStore(store_name);
         },
