@@ -847,7 +847,13 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
             };
             // send event off as if the file was drag/dropped
             ///com-chilipeppr-elem-dragdrop/loadGcodeDoNotCreateRecentFileEntry
-            chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", gcodetxt, info);    
+            //loadGcodeDoNotCreateRecentFileEntry
+            // chilipeppr.publish("/com-chilipeppr-elem-dragdrop/ondropped", gcodetxt, info);  
+            chilipeppr.publish("/com-chilipeppr-elem-dragdrop/loadGcodeDoNotCreateRecentFileEntry", {
+                gcode:gcodetxt, 
+                name:info.name,
+                lastModified:info.lastModified,
+            });    
             
             // turn on 3d viewer temporarily so can see results (turn off later)
             setTimeout(function() {
