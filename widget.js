@@ -27,7 +27,7 @@ requirejs.config({
         // Example of how to define the key (you make up the key) and the URL
         // Make sure you DO NOT put the .js at the end of the URL
         // SmoothieCharts: '//smoothiecharts.org/smoothie',
-        Three: '//i2dcui.appspot.com/slingshot?url=http://threejs.org/build/three.js',
+        Three: '//i2dcui.appspot.com/geturl?url=http://threejs.org/build/three.js',
     },
     shim: {
         // See require.js docs for how to define dependencies that
@@ -845,6 +845,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
             // turn on 3d viewer temporarily so can see results (turn off later)
             setTimeout(function() {
                 $('.com-chilipeppr-widget-3dviewer-settings-fr-5').trigger("click");
+                chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
             }, 200);
             
             // turn off 3d viewer a bit later cuz too much contention
