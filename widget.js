@@ -1208,11 +1208,11 @@ G1 Y45
                 }
                 else {
                     var val = parseInt(sr[key]);
-                    console.log("in else of key in sr. key:", key, "val:", val);
-                    if (this.statusItems) {
+                    // console.log("in else of key in sr. key:", key, "val:", val);
+                    if (this.statusItems && key in this.statusItems) {
                         el.find('.' + key).text(this.statusItems[key][val]);
                     } else {
-                        console.error("this.statusItems should not be null. huh? key:", key)
+                        console.error("key not in this.statusItems. huh? key:", key)
                     }
                 }
             }
