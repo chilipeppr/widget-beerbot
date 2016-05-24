@@ -327,7 +327,7 @@ cpdefine("inline:com-zipwhip-widget-texterator", ['Three', "chilipeppr_ready",  
                 chilipeppr.publish('/com-chilipeppr-widget-3dviewer/wakeanimate');
                 chilipeppr.publish('/com-chilipeppr-widget-3dviewer/drawextents');
                 
-            }, 2000);
+            }, 4000);
             
             console.log("I am done being initted.");
         },
