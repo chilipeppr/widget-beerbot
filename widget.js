@@ -979,13 +979,42 @@ G1 Y45
             // when we get a msg we need to analyze it for content
             
             // if msg is from 844-txt-beer then ignore it
-            if (msg.srcAddr == "8448982337") {
-                console.warn("got msg from self. ignoring so don't end up in endless loop.")
-                return;
-            }
+            // if (msg.srcAddr == "8448982337") {
+            //     console.warn("got msg from self. ignoring so don't end up in endless loop.")
+            //     return;
+            // }
             
             // see if they want a beer
             var that = this;
+            
+            // test to see if it's an amazon inbound
+            // if so, we'll create a fake msg object by yanking out the mobile
+            // number and setting the body to "beer"
+            if (msg.srcAddr == "8448982337") {
+                // this means it's from amazon
+                console.log("got msg from amazon sns service. msg:", msg);
+                
+                var jsonStr = msg.body;
+                // make sure it's json
+                if (jsonStr.match(/^{/)) {
+                    //parse json
+                    var jsonObj = JSON.parse(jsonStr);
+                    // we get "phone" value
+                    // override the msg to be as if it was from the embedded phone val
+                    if ('phone' in jsonObj) {
+                        msg.srcAddr = jsonObj.phone;
+                        msg.body = "beer";
+                    } else {
+                        console.error("uh oh, we expected a phone parameter in the json payload of the amazon msg.");
+                    }
+                    
+                } else {
+                    console.error("uh oh, when from amazon it should be parseable json");
+                    return;
+                }
+                
+            }
+            
             if (msg.body.match(/beer/i)) {
                 console.log("looks like they want a beer");
                 

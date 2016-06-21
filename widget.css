@@ -211,6 +211,9 @@
 #com-zipwhip-widget-texterator-screensaver .close2:hover {
     opacity: 0.8;
 }
+/*
+ * This is for the wide HP computer
+
 @keyframes zoomInOut1 {
   0%   { font-size: 100px; color: #333; }
   10%  { font-size: 120px; color: #000; }
@@ -225,6 +228,52 @@
   50%  { font-size: 120px; color: #000; }
   60% { font-size: 100px; color: #333; }
   100% { font-size: 100px; color: #333; }
+}
+@keyframes fadeAndScale {
+    from {
+        opacity: 0;
+        transform: scale(.5, .5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1, 1);
+    }
+}
+@keyframes fadeAndScaleAndRotate {
+    from {
+        opacity: 0;
+        transform: rotate(2deg) scale(.5, .5);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(7deg) scale(1, 1);
+    }
+}
+@keyframes countdownFadeInFadeOut {
+    0% { opacity: 0; transform: scale(.5, .5); }
+    80% { opacity: 1; transform: scale(1, 1); }
+    99% { opacity: 1; transform: scale(1, 1); }
+    100% { opacity: 0; transform: scale(1, 1); }
+}
+*/
+
+/*
+* This is for JOhn's Laptop
+*/
+@keyframes zoomInOut1 {
+  0%   { font-size: 50px; color: #333; }
+  10%  { font-size: 60px; color: #000; }
+  20%  { font-size: 60px; color: #000; }
+  30% { font-size: 50px; color: #333; }
+  100% { font-size: 50px; color: #333; }
+}
+@keyframes zoomInOut2 {
+  0%   { font-size: 50px; color: #333; }
+  30%   { font-size: 50px; color: #333; }
+  40%  { font-size: 60px; color: #000; }
+  50%  { font-size: 60px; color: #000; }
+  60% { font-size: 50px; color: #333; }
+  100% { font-size: 50px; color: #333; }
 }
 @keyframes fadeAndScale {
     from {
