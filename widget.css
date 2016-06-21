@@ -114,14 +114,7 @@
     width:30%;
     left:10%;
 }
-#com-zipwhip-widget-texterator-screensaver .snap-step {
-    position:absolute;
-    left:50%;
-    font-size:280px;
-    top:15%;
-    text-align: left;
-    opacity:0;
-}
+
 #com-zipwhip-widget-texterator-screensaver .snap-step.snap-step0 {
     font-size:60px;
 }
@@ -208,6 +201,14 @@
 #com-zipwhip-widget-texterator-screensaver .snap-step-phone {
     font-size:140px;
 }
+#com-zipwhip-widget-texterator-screensaver .snap-step {
+    position:absolute;
+    left:50%;
+    font-size:280px;
+    top:15%;
+    text-align: left;
+    opacity:0;
+}
 @keyframes zoomInOut1 {
   0%   { font-size: 100px; color: #333; }
   10%  { font-size: 120px; color: #000; }
@@ -268,6 +269,14 @@
 }
 #com-zipwhip-widget-texterator-screensaver .snap-step-phone {
     font-size:70px;
+}
+#com-zipwhip-widget-texterator-screensaver .snap-step {
+    position:absolute;
+    left:50%;
+    font-size:140px;
+    top:15%;
+    text-align: left;
+    opacity:0;
 }
 @keyframes zoomInOut1 {
   0%   { font-size: 50px; color: #333; }
